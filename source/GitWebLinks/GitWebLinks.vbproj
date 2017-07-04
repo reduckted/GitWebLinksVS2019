@@ -78,17 +78,17 @@
     <Compile Include="Git\GitInfo.vb" />
     <Compile Include="Git\GitInfoFinder.vb" />
     <Compile Include="Git\IGitInfoFinder.vb" />
-    <Compile Include="Git\ILinkInfoFinder.vb" />
-    <Compile Include="Git\ILinkInfoProvider.vb" />
-    <Compile Include="Git\LinkInfo.vb" />
-    <Compile Include="Git\LinkInfoFinder.vb" />
+    <Compile Include="Links\ILinkInfoFinder.vb" />
+    <Compile Include="Links\ILinkInfoProvider.vb" />
+    <Compile Include="Links\LinkInfo.vb" />
+    <Compile Include="Links\LinkInfoFinder.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="Link Handlers\GitHubHandler.vb" />
-    <Compile Include="Link Handlers\ILinkHandler.vb" />
-    <Compile Include="Link Handlers\LineSelection.vb" />
+    <Compile Include="Links\Handlers\GitHubHandler.vb" />
+    <Compile Include="Links\Handlers\ILinkHandler.vb" />
+    <Compile Include="Links\Handlers\LineSelection.vb" />
     <Compile Include="Utilities\Clipboard.vb" />
     <Compile Include="Utilities\DteProvider.vb" />
-    <Compile Include="Git\LinkInfoProvider.vb" />
+    <Compile Include="Links\LinkInfoProvider.vb" />
     <Compile Include="Utilities\IClipboard.vb" />
     <Compile Include="Utilities\IDteProvider.vb" />
   </ItemGroup>
@@ -192,6 +192,7 @@
   <ItemGroup>
     <VSCTCompile Include="CopyLinkCommandPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>

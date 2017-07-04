@@ -152,10 +152,12 @@
     <Compile Include="Commands\CopyLinkToCurrentFileCommandTests.vb" />
     <Compile Include="Commands\CopyLinkToSolutionExplorerItemCommandTests.vb" />
     <Compile Include="Git\GitInfoFinderTests.vb" />
-    <Compile Include="Git\LinkInfoTests.vb" />
-    <Compile Include="Git\LinkInfoProviderTests.vb" />
+    <Compile Include="Links\LinkInfoTests.vb" />
+    <Compile Include="Links\LinkInfoProviderTests.vb" />
     <Compile Include="Git\GitInfoTests.vb" />
-    <Compile Include="Link Handlers\GitHubHandlerTests.vb" />
+    <Compile Include="Link Handlers\BitbucketCloudHandlerTests.vb" />
+    <Compile Include="Links\Handlers\GitHubHandlerTests.vb" />
+    <Compile Include="Links\Handlers\LinkHandlerHelpers.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="Test Helpers\TempDirectory.vb" />
     <Compile Include="Utilities\DteProviderTests.vb" />

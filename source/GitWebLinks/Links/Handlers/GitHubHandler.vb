@@ -36,34 +36,36 @@ Public Class GitHubHandler
         Implements ILinkHandler.MakeUrl
 
         Dim url As String
-        Dim root As String
+        Dim repositoryPath As String
         Dim branch As String
         Dim relativePathToFile As String
 
 
         ' Get the repository's path out of the remote URL.
-        root = RemotePattern.Match(gitInfo.RemoteUrl).Groups(1).Value
+        repositoryPath = RemotePattern.Match(gitInfo.RemoteUrl).Groups(1).Value
 
         relativePathToFile = filePath.Substring(gitInfo.RootDirectory.Length).Replace("\", "/").Trim("/"c)
 
+        ' Get the current branch name. The remote branch might not be the same,
+        ' but it's better than using a commit hash which won't match anything on
+        ' the remote if there are commits to this branch on the local repository.
         Using repository As New Repository(gitInfo.RootDirectory)
             branch = repository.Head.FriendlyName
         End Using
 
-        url = String.Join(
-            "/",
+        url = String.Join("/", {
             "https://github.com",
-            root,
+            repositoryPath,
             "blob",
-            branch,
-            relativePathToFile
-        )
+            Uri.EscapeUriString(branch),
+            Uri.EscapeUriString(relativePathToFile)
+        })
 
         If selection IsNot Nothing Then
-            If selection.StartLineNumber = selection.EndLineNumber Then
-                url &= $"#L{selection.StartLineNumber}"
-            Else
-                url &= $"#L{selection.StartLineNumber}-L{selection.EndLineNumber}"
+            url &= $"#L{selection.StartLineNumber}"
+
+            If selection.StartLineNumber <> selection.EndLineNumber Then
+                url &= $"-L{selection.EndLineNumber}"
             End If
         End If
 
