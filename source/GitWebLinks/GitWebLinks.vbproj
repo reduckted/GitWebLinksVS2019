@@ -82,6 +82,7 @@
     <Compile Include="Links\ILinkInfoProvider.vb" />
     <Compile Include="Links\LinkInfo.vb" />
     <Compile Include="Links\LinkInfoFinder.vb" />
+    <Compile Include="Links\Handlers\BitbucketCloudHandler.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="Links\Handlers\GitHubHandler.vb" />
     <Compile Include="Links\Handlers\ILinkHandler.vb" />

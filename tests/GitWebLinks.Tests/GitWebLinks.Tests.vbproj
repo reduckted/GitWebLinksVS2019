@@ -155,7 +155,7 @@
     <Compile Include="Links\LinkInfoTests.vb" />
     <Compile Include="Links\LinkInfoProviderTests.vb" />
     <Compile Include="Git\GitInfoTests.vb" />
-    <Compile Include="Link Handlers\BitbucketCloudHandlerTests.vb" />
+    <Compile Include="Links\Handlers\BitbucketCloudHandlerTests.vb" />
     <Compile Include="Links\Handlers\GitHubHandlerTests.vb" />
     <Compile Include="Links\Handlers\LinkHandlerHelpers.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
