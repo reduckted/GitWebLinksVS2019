@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "GitWebLinks", "source\GitWebLinks\GitWebLinks.vbproj", "{481763D0-AAF3-4556-8729-015BE99B6BA9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{D2A8E9D4-9B73-44EA-B1AC-AA43D795F3EA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1E20E79C-7D9B-4356-876A-B7988E94FF19}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "GitWebLinks.Tests", "tests\GitWebLinks.Tests\GitWebLinks.Tests.vbproj", "{7EBD78BF-535C-4094-B410-E94B7BC6D986}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{481763D0-AAF3-4556-8729-015BE99B6BA9} = {D2A8E9D4-9B73-44EA-B1AC-AA43D795F3EA}
+		{7EBD78BF-535C-4094-B410-E94B7BC6D986} = {1E20E79C-7D9B-4356-876A-B7988E94FF19}
+	EndGlobalSection
+EndGlobal
