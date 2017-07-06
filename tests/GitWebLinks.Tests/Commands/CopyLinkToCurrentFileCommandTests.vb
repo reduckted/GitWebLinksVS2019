@@ -86,7 +86,7 @@ Public Class CopyLinkToCurrentFileCommandTests
             status = command.OleStatus
 
             Assert.True(command.Visible)
-            Assert.Equal("Copy link to file on Foo", command.Text)
+            Assert.Equal("Copy link to Foo", command.Text)
         End Sub
 
 
@@ -116,7 +116,7 @@ Public Class CopyLinkToCurrentFileCommandTests
             status = command.OleStatus
 
             Assert.True(command.Visible)
-            Assert.Equal("Copy link to line on Foo", command.Text)
+            Assert.Equal("Copy link to Foo", command.Text)
         End Sub
 
 
@@ -146,7 +146,7 @@ Public Class CopyLinkToCurrentFileCommandTests
             status = command.OleStatus
 
             Assert.True(command.Visible)
-            Assert.Equal("Copy link to selection on Foo", command.Text)
+            Assert.Equal("Copy link to Foo", command.Text)
         End Sub
 
     End Class

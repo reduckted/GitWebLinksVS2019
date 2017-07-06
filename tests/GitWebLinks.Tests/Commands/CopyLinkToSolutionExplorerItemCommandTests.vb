@@ -123,7 +123,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             status = command.OleStatus
 
             Assert.True(command.Visible)
-            Assert.Equal("Copy link to file on Foo", command.Text)
+            Assert.Equal("Copy link to Foo", command.Text)
         End Sub
 
 
@@ -153,7 +153,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             status = command.OleStatus
 
             Assert.True(command.Visible)
-            Assert.Equal("Copy link to file on Foo", command.Text)
+            Assert.Equal("Copy link to Foo", command.Text)
         End Sub
 
 
@@ -183,7 +183,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             status = command.OleStatus
 
             Assert.True(command.Visible)
-            Assert.Equal("Copy link to file on Foo", command.Text)
+            Assert.Equal("Copy link to Foo", command.Text)
         End Sub
 
 
@@ -213,7 +213,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             status = command.OleStatus
 
             Assert.True(command.Visible)
-            Assert.Equal("Copy link to folder on Foo", command.Text)
+            Assert.Equal("Copy link to Foo", command.Text)
         End Sub
 
     End Class

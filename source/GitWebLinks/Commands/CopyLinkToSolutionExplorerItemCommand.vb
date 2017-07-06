@@ -34,17 +34,8 @@ Public Class CopyLinkToSolutionExplorerItemCommand
 
     Protected Overrides Sub BeforeQueryStatus(command As OleMenuCommand)
         If (cgLinkInfoProvider.LinkInfo IsNot Nothing) AndAlso (Not String.IsNullOrEmpty(GetSelectedFilePath())) Then
-            Dim type As String
-
-
-            If command.CommandID.Equals(Commands.CopyLinkToFolderItem) Then
-                type = "folder"
-            Else
-                type = "file"
-            End If
-
             command.Visible = True
-            command.Text = $"Copy link to {type} on {cgLinkInfoProvider.LinkInfo.Handler.Name}"
+            command.Text = $"Copy link to {cgLinkInfoProvider.LinkInfo.Handler.Name}"
 
         Else
             command.Visible = False
