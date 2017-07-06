@@ -1,74 +1,57 @@
-﻿Imports LibGit2Sharp
-Imports System.ComponentModel.Composition
-Imports System.Text.RegularExpressions
+﻿Imports System.ComponentModel.Composition
 
 
 <Export(GetType(ILinkHandler))>
 Public Class BitbucketCloudHandler
-    Implements ILinkHandler
+    Inherits LinkHandlerBase
 
 
-    Private Shared ReadOnly RemotePattern As New Regex("^(?:git@bitbucket\.org:|https:\/\/bitbucket\.org\/)(.+)\.git$")
+    Private ReadOnly cgOptions As IOptions
 
 
-    Public ReadOnly Property Name As String _
-        Implements ILinkHandler.Name
+    <ImportingConstructor()>
+    Public Sub New(options As IOptions)
+        cgOptions = options
+    End Sub
 
+
+    Public Overrides ReadOnly Property Name As String
         Get
             Return "Bitbucket"
         End Get
     End Property
 
 
-    Public Function IsMatch(remoteUrl As String) As Boolean _
-        Implements ILinkHandler.IsMatch
-
-        Return RemotePattern.IsMatch(remoteUrl)
+    Protected Overrides Function GetServerUrls() As IEnumerable(Of String)
+        Return cgOptions.BitbucketCloudUrls
     End Function
 
 
-    Public Function MakeUrl(
-            gitInfo As GitInfo,
+    Protected Overrides Function CreateUrl(
+            repositoryPath As String,
+            branch As String,
+            relativePathToFile As String
+        ) As String
+
+        Return String.Join("/", {"https://bitbucket.org", repositoryPath, "src", branch, relativePathToFile})
+    End Function
+
+
+    Protected Overrides Function GetSelectionHash(
             filePath As String,
             selection As LineSelection
-        ) As String _
-        Implements ILinkHandler.MakeUrl
+        ) As String
 
-        Dim url As String
-        Dim repositoryPath As String
-        Dim branch As String
-        Dim relativePathToFile As String
+        Dim hash As String
 
 
-        ' Get the repository's path out of the remote URL.
-        repositoryPath = RemotePattern.Match(gitInfo.RemoteUrl).Groups(1).Value
+        hash = $"#{Uri.EscapeUriString(IO.Path.GetFileName(filePath))}-{selection.StartLineNumber}"
 
-        relativePathToFile = filePath.Substring(gitInfo.RootDirectory.Length).Replace("\", "/").Trim("/"c)
-
-        ' Get the current branch name. The remote branch might not be the same,
-        ' but it's better than using a commit hash which won't match anything on
-        ' the remote if there are commits to this branch on the local repository.
-        Using repository As New Repository(gitInfo.RootDirectory)
-            branch = repository.Head.FriendlyName
-        End Using
-
-        url = String.Join("/", {
-            "https://bitbucket.org",
-            repositoryPath,
-            "src",
-            Uri.EscapeUriString(branch),
-            Uri.EscapeUriString(relativePathToFile)
-        })
-
-        If selection IsNot Nothing Then
-            url &= $"#{Uri.EscapeUriString(IO.Path.GetFileName(filePath))}-{selection.StartLineNumber}"
-
-            If selection.StartLineNumber <> selection.EndLineNumber Then
-                url &= $":{selection.EndLineNumber}"
-            End If
+        If selection.StartLineNumber <> selection.EndLineNumber Then
+            hash &= $":{selection.EndLineNumber}"
         End If
 
-        Return url
+        Return hash
     End Function
 
 End Class

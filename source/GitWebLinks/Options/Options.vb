@@ -24,7 +24,7 @@ Public Class Options
 
 
     Private Shared ReadOnly DefaultBitbucketServerUrls() As String = {
-        "http://my-bitbucket-server:7990",
+        "http://my-bitbucket-server:7990/bitbucket",
         "git@my-bitbucket-server:7999"
     }
 

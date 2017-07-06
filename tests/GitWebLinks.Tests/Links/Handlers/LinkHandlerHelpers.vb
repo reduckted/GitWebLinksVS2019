@@ -4,28 +4,6 @@ Imports System.IO
 
 Public Class LinkHandlerHelpers
 
-    Public Shared Iterator Function GetGitHubRemotes() As IEnumerable(Of Object())
-        Yield {"https://github.com/dotnet/corefx.git"}
-        Yield {"git@github.com:dotnet/corefx.git"}
-    End Function
-
-
-    Public Shared Iterator Function GetBitbucketCloudRemotes() As IEnumerable(Of Object())
-        Yield {"https://bitbucket.org/atlassian/atlassian-bamboo_rest.git"}
-        Yield {"git@bitbucket.org:atlassian/atlassian-bamboo_rest.git"}
-    End Function
-
-
-    Public Shared Function GetNonGitHubRemotes() As IEnumerable(Of Object())
-        Return GetBitbucketCloudRemotes()
-    End Function
-
-
-    Public Shared Function GetNonBitbucketCloudRemotes() As IEnumerable(Of Object())
-        Return GetGitHubRemotes()
-    End Function
-
-
     Public Shared Function InitializeRepository(dir As String) As Repository
         Dim repository As Repository
         Dim fileName As String
