@@ -78,6 +78,7 @@
     <Compile Include="Git\GitInfo.vb" />
     <Compile Include="Git\GitInfoFinder.vb" />
     <Compile Include="Git\IGitInfoFinder.vb" />
+    <Compile Include="Links\Handlers\BitbucketServerHandler.vb" />
     <Compile Include="Links\Handlers\LinkHandlerBase.vb" />
     <Compile Include="Links\ILinkInfoFinder.vb" />
     <Compile Include="Links\ILinkInfoProvider.vb" />
