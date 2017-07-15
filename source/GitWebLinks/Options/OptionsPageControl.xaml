@@ -14,8 +14,20 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
+        <Grid.Resources>
+            <Style TargetType="DataGrid">
+                <Setter Property="AutoGenerateColumns" Value="False"/>
+                <Setter Property="CanUserAddRows" Value="True"/>
+                <Setter Property="CanUserDeleteRows" Value="True"/>
+                <Setter Property="CanUserResizeRows" Value="False"/>
+                <Setter Property="CanUserResizeColumns" Value="False"/>
+                <Setter Property="CanUserReorderColumns" Value="False"/>
+                <Setter Property="CanUserSortColumns" Value="False"/>
+                <Setter Property="RowHeaderWidth" Value="32"/>
+            </Style>
+        </Grid.Resources>
 
         <TextBlock 
             Grid.Row="0"
@@ -23,8 +35,7 @@
             Margin="0,0,0,5"
             >
             
-            If you're using behind-the-firewall versions of GitHub or Bitbucket Server,
-            add their servers below. Add each server on a new line.
+            If you're using GitHub Enterprise or Bitbucket Server, add their URLs below.
         </TextBlock>
 
         <Grid Grid.Row="1">
@@ -36,15 +47,29 @@
             <TextBlock
                 Grid.Row="0"
                 Margin="0,5,0,2"
-                Text="GitHub or GitHub Enterprise:"
+                Text="GitHub Enterprise:"
                 />
 
-            <TextBox
-                x:Name="GitHubUrlsTextBox"
+            <DataGrid
+                x:Name="GitHubEnterpriseDataGrid"
                 Grid.Row="1"
-                Padding="2"
-                AcceptsReturn="True" 
-                />
+                ItemsSource="{Binding GitHubEnterpriseUrls}"
+                >
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn 
+                        Width="*"
+                        Header="Base URL"
+                        Binding="{Binding BaseUrl}"
+                        />
+
+                    <DataGridTextColumn 
+                        Width="*"
+                        Header="SSH URL"
+                        Binding="{Binding SshUrl}"
+                        />
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
 
         <Grid Grid.Row="2">
@@ -56,36 +81,29 @@
             <TextBlock
                 Grid.Row="0"
                 Margin="0,5,0,2"
-                Text="Bitbucket Cloud:"
-                />
-
-            <TextBox
-                x:Name="BitbucketCloudUrlsTextBox"
-                Grid.Row="1"
-                Padding="2"
-                AcceptsReturn="True" 
-                />
-        </Grid>
-
-        <Grid Grid.Row="3">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <TextBlock
-                Grid.Row="0"
-                Margin="0,5,0,2"
                 Text="Bitbucket Server:"
                 />
 
-            <TextBox
-                x:Name="BitbucketServerUrlsTextBox"
+            <DataGrid
+                x:Name="BitbucketServerDataGrid"
                 Grid.Row="1"
-                Padding="2"
-                AcceptsReturn="True" 
-                />
-        </Grid>
+                ItemsSource="{Binding BitbucketServerUrls}"
+                >
 
+                <DataGrid.Columns>
+                    <DataGridTextColumn 
+                        Width="*"
+                        Header="Base URL"
+                        Binding="{Binding BaseUrl}"
+                        />
+
+                    <DataGridTextColumn 
+                        Width="*"
+                        Header="SSH URL"
+                        Binding="{Binding SshUrl}"
+                        />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
     </Grid>
 </UserControl>

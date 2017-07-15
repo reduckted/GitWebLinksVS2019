@@ -88,6 +88,8 @@
     <Compile Include="Links\Handlers\GitHubHandler.vb" />
     <Compile Include="Links\Handlers\ILinkHandler.vb" />
     <Compile Include="Links\Handlers\LineSelection.vb" />
+    <Compile Include="Options\OptionsPageControlViewModel.vb" />
+    <Compile Include="Options\ServerUrl.vb" />
     <Compile Include="Options\IOptions.vb" />
     <Compile Include="Options\ISettingsManager.vb" />
     <Compile Include="Options\Options.vb" />
@@ -97,6 +99,7 @@
     <Compile Include="Options\OptionsPageControl.xaml.vb">
       <DependentUpon>OptionsPageControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Options\ServerUrlModel.vb" />
     <Compile Include="Options\SettingsManager.vb" />
     <Compile Include="Utilities\Clipboard.vb" />
     <Compile Include="Utilities\DteProvider.vb" />
@@ -203,6 +206,8 @@
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>

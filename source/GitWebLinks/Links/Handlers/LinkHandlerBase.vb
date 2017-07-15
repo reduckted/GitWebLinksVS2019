@@ -1,8 +1,15 @@
 ﻿Imports LibGit2Sharp
+Imports System.Text.RegularExpressions
 
 
 Public MustInherit Class LinkHandlerBase
     Implements ILinkHandler
+
+
+    Private Const SshPrefix As String = "ssh://"
+
+
+    Private Shared ReadOnly UsernamePattern As New Regex("(?<scheme>https?://)[^@]+@(?<address>.+)")
 
 
     Public MustOverride ReadOnly Property Name As String _
@@ -12,7 +19,7 @@ Public MustInherit Class LinkHandlerBase
     Public Function IsMatch(remoteUrl As String) As Boolean _
         Implements ILinkHandler.IsMatch
 
-        Return GetMatchingServerUrl(remoteUrl) IsNot Nothing
+        Return GetMatchingServerUrl(FixRemoteUrl(remoteUrl)) IsNot Nothing
     End Function
 
 
@@ -24,16 +31,19 @@ Public MustInherit Class LinkHandlerBase
         Implements ILinkHandler.MakeUrl
 
         Dim url As String
+        Dim fixedRemoteUrl As String
+        Dim server As ServerUrl
         Dim repositoryPath As String
-        Dim branch As String
         Dim relativePathToFile As String
+        Dim branch As String
+        Dim baseUrl As String
 
+
+        fixedRemoteUrl = FixRemoteUrl(gitInfo.RemoteUrl)
+        server = GetMatchingServerUrl(fixedRemoteUrl)
 
         ' Get the repository's path out of the remote URL.
-        repositoryPath = GetRepositoryPath(
-            gitInfo.RemoteUrl,
-            GetMatchingServerUrl(gitInfo.RemoteUrl)
-        )
+        repositoryPath = GetRepositoryPath(fixedRemoteUrl, server)
 
         relativePathToFile = filePath.Substring(gitInfo.RootDirectory.Length).Replace("\", "/").Trim("/"c)
 
@@ -41,10 +51,17 @@ Public MustInherit Class LinkHandlerBase
         ' but it's better than using a commit hash which won't match anything on
         ' the remote if there are commits to this branch on the local repository.
         Using repository As New Repository(gitInfo.RootDirectory)
-            branch = repository.Head.FriendlyName
+            branch = GetBranchName(repository.Head)
         End Using
 
+        baseUrl = server.BaseUrl
+
+        If baseUrl.EndsWith("/"c) Then
+            baseUrl = baseUrl.Substring(0, baseUrl.Length - 1)
+        End If
+
         url = CreateUrl(
+            baseUrl,
             repositoryPath,
             Uri.EscapeUriString(branch),
             Uri.EscapeUriString(relativePathToFile)
@@ -60,24 +77,54 @@ Public MustInherit Class LinkHandlerBase
 
     Private Function GetMatchingServerUrl(
             remoteUrl As String
-        ) As String
+        ) As ServerUrl
 
-        Return GetServerUrls().FirstOrDefault(Function(x) remoteUrl.StartsWith(x))
+        Return (
+            From server In GetServerUrls()
+            Where remoteUrl.StartsWith(server.BaseUrl, StringComparison.Ordinal) _
+            OrElse remoteUrl.StartsWith(server.SshUrl, StringComparison.Ordinal)
+        ).FirstOrDefault()
     End Function
 
 
-    Protected MustOverride Function GetServerUrls() As IEnumerable(Of String)
+    Private Function FixRemoteUrl(remoteUrl As String) As String
+        If remoteUrl.StartsWith(SshPrefix, StringComparison.Ordinal) Then
+            ' Remove the SSH prefix.
+            remoteUrl = remoteUrl.Substring(SshPrefix.Length)
+
+        Else
+            Dim match As Match
+
+
+            ' This will be an HTTP address. Check if there's 
+            ' a username in the URL And if there Is, remove it.
+            match = UsernamePattern.Match(remoteUrl)
+
+            If match.Success Then
+                remoteUrl = match.Groups("scheme").Value & match.Groups("address").Value
+            End If
+        End If
+
+        Return remoteUrl
+    End Function
+
+
+    Protected MustOverride Function GetServerUrls() As IEnumerable(Of ServerUrl)
 
 
     Private Function GetRepositoryPath(
             remoteUrl As String,
-            matchingServer As String
+            matchingServer As ServerUrl
         ) As String
 
         Dim path As String
 
 
-        path = remoteUrl.Substring(matchingServer.Length)
+        If remoteUrl.StartsWith(matchingServer.BaseUrl, StringComparison.Ordinal) Then
+            path = remoteUrl.Substring(matchingServer.BaseUrl.Length)
+        Else
+            path = remoteUrl.Substring(matchingServer.SshUrl.Length)
+        End If
 
         ' The server URL we matched against may not have ended 
         ' with a slash (For HTTPS paths) or a colon (For Git paths), 
@@ -96,7 +143,11 @@ Public MustInherit Class LinkHandlerBase
     End Function
 
 
+    Protected MustOverride Function GetBranchName(branch As Branch) As String
+
+
     Protected MustOverride Function CreateUrl(
+            baseUrl As String,
             repositoryPath As String,
             branch As String,
             relativePathToFile As String

@@ -14,12 +14,14 @@ Public Class OptionsPage
 
 
     Private cgControl As OptionsPageControl
+    Private cgViewModel As OptionsPageControlViewModel
 
 
     Protected Overrides ReadOnly Property Child As UIElement
         Get
             If cgControl Is Nothing Then
-                cgControl = New OptionsPageControl
+                cgViewModel = New OptionsPageControlViewModel
+                cgControl = New OptionsPageControl With {.DataContext = cgViewModel}
             End If
 
             Return cgControl
@@ -35,9 +37,16 @@ Public Class OptionsPage
 
         options = GetOptions()
 
-        cgControl.GitHubUrls = String.Join(Environment.NewLine, options.GitHubUrls)
-        cgControl.BitbucketCloudUrls = String.Join(Environment.NewLine, options.BitbucketCloudUrls)
-        cgControl.BitbucketServerUrls = String.Join(Environment.NewLine, options.BitbucketServerUrls)
+        cgViewModel.GitHubEnterpriseUrls.Clear()
+        cgViewModel.BitbucketServerUrls.Clear()
+
+        For Each server In ToModel(options.GitHubEnterpriseUrls)
+            cgViewModel.GitHubEnterpriseUrls.Add(server)
+        Next server
+
+        For Each server In ToModel(options.BitbucketServerUrls)
+            cgViewModel.BitbucketServerUrls.Add(server)
+        Next server
     End Sub
 
 
@@ -48,22 +57,29 @@ Public Class OptionsPage
 
             options = GetOptions()
 
-            options.GitHubUrls = MakeCollection(cgControl.GitHubUrls)
-            options.BitbucketCloudUrls = MakeCollection(cgControl.BitbucketCloudUrls)
-            options.BitbucketServerUrls = MakeCollection(cgControl.BitbucketServerUrls)
+            options.GitHubEnterpriseUrls = FromModel(cgViewModel.GitHubEnterpriseUrls)
+            options.BitbucketServerUrls = FromModel(cgViewModel.BitbucketServerUrls)
+
+            options.Save()
         End If
 
         MyBase.OnApply(e)
     End Sub
 
 
-    Private Function MakeCollection(s As String) As IEnumerable(Of String)
+    Private Function ToModel(servers As IEnumerable(Of ServerUrl)) As IEnumerable(Of ServerUrlModel)
         Return (
-            From value In s.Split({Environment.NewLine}, StringSplitOptions.None)
-            Let trimmed = value.Trim()
-            Where Not String.IsNullOrEmpty(trimmed)
-            Select trimmed
+            From server In servers
+            Select New ServerUrlModel With {
+                .BaseUrl = server.BaseUrl,
+                .SshUrl = server.SshUrl
+            }
         )
+    End Function
+
+
+    Private Function FromModel(servers As IEnumerable(Of ServerUrlModel)) As IEnumerable(Of ServerUrl)
+        Return servers.Select(Function(x) New ServerUrl(x.BaseUrl, x.SshUrl))
     End Function
 
 

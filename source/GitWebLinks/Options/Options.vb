@@ -1,4 +1,5 @@
 ﻿Imports System.ComponentModel.Composition
+Imports System.Xml.Linq
 
 
 <Export(GetType(IOptions))>
@@ -6,33 +7,23 @@ Public Class Options
     Implements IOptions
 
 
-    Private Const GitHubUrlsProperty As String = "GitHubUrls"
-    Private Const BitbucketCloudUrlsProperty As String = "BitbucketCloudURls"
-    Private Const BitbucketServerUrlsProperty As String = "BitbucketServerUrls"
+    Private Const GitHubEnterpriseServersProperty As String = "GitHubEnterpriseServers"
+    Private Const BitbucketServerServersProperty As String = "BitbucketServerServers"
 
 
-    Private Shared ReadOnly DefaultGitHubUrls() As String = {
-        "https://github.com",
-        "git@github.com"
+    Private Shared ReadOnly DefaultGitHubEnterpriseServers() As ServerUrl = {
+        New ServerUrl("http://my-github-server", "git@my-github-server")
     }
 
 
-    Private Shared ReadOnly DefaultBitbucketCloudUrls() As String = {
-        "https://bitbucket.org",
-        "git@bitbucket.org"
-    }
-
-
-    Private Shared ReadOnly DefaultBitbucketServerUrls() As String = {
-        "http://my-bitbucket-server:7990/bitbucket",
-        "git@my-bitbucket-server:7999"
+    Private Shared ReadOnly DefaultBitbucketServerServers() As ServerUrl = {
+        New ServerUrl("http://my-bitbucket-server:7990/bitbucket", "git@my-bitbucket-server:7999")
     }
 
 
     Private ReadOnly cgSettingsManager As ISettingsManager
-    Private ReadOnly cgGitHubUrls As New List(Of String)(DefaultGitHubUrls)
-    Private ReadOnly cgBitbucketCloudUrls As New List(Of String)(DefaultBitbucketCloudUrls)
-    Private ReadOnly cgBitbucketServerUrls As New List(Of String)(DefaultBitbucketServerUrls)
+    Private ReadOnly cgGitHubEnterpriseServers As New List(Of ServerUrl)(DefaultGitHubEnterpriseServers)
+    Private ReadOnly cgBitbucketServerServers As New List(Of ServerUrl)(DefaultBitbucketServerServers)
 
 
     <ImportingConstructor()>
@@ -42,88 +33,48 @@ Public Class Options
     End Sub
 
 
-    Public Property GitHubUrls As IEnumerable(Of String) _
-        Implements IOptions.GitHubUrls
+    Public Property GitHubEnterpriseUrls As IEnumerable(Of ServerUrl) _
+        Implements IOptions.GitHubEnterpriseUrls
 
         Get
-            Return cgGitHubUrls
+            Return cgGitHubEnterpriseServers
         End Get
 
         Set
-            cgGitHubUrls.Clear()
+            cgGitHubEnterpriseServers.Clear()
 
             If Value IsNot Nothing Then
-                cgGitHubUrls.AddRange(Value)
+                cgGitHubEnterpriseServers.AddRange(Value)
             End If
-
-            ' Add the default URLs back in if they were all deleted.
-            If cgGitHubUrls.Count = 0 Then
-                cgGitHubUrls.AddRange(DefaultGitHubUrls)
-            End If
-
-            SaveSettings()
         End Set
     End Property
 
 
-    Public Property BitbucketCloudUrls As IEnumerable(Of String) _
-        Implements IOptions.BitbucketCloudUrls
-
-        Get
-            Return cgBitbucketCloudUrls
-        End Get
-
-        Set
-            cgBitbucketCloudUrls.Clear()
-
-            If Value IsNot Nothing Then
-                cgBitbucketCloudUrls.AddRange(Value)
-            End If
-
-            ' Add the default URLs back in if they were all deleted.
-            If cgBitbucketCloudUrls.Count = 0 Then
-                cgBitbucketCloudUrls.AddRange(DefaultBitbucketCloudUrls)
-            End If
-
-            SaveSettings()
-        End Set
-    End Property
-
-
-    Public Property BitbucketServerUrls As IEnumerable(Of String) _
+    Public Property BitbucketServerUrls As IEnumerable(Of ServerUrl) _
         Implements IOptions.BitbucketServerUrls
 
         Get
-            Return cgBitbucketServerUrls
+            Return cgBitbucketServerServers
         End Get
 
         Set
-            cgBitbucketServerUrls.Clear()
+            cgBitbucketServerServers.Clear()
 
             If Value IsNot Nothing Then
-                cgBitbucketServerUrls.AddRange(Value)
+                cgBitbucketServerServers.AddRange(Value)
             End If
-
-            ' Note: We don't add the default URLs back in because the
-            ' defaults are only used as an example of what to specify.
-
-            SaveSettings()
         End Set
     End Property
 
 
     Private Sub LoadSettings()
         Try
-            If cgSettingsManager.Contains(GitHubUrlsProperty) Then
-                GitHubUrls = cgSettingsManager.GetString(GitHubUrlsProperty).Split("|"c)
+            If cgSettingsManager.Contains(GitHubEnterpriseServersProperty) Then
+                GitHubEnterpriseUrls = DecodeServers(cgSettingsManager.GetString(GitHubEnterpriseServersProperty))
             End If
 
-            If cgSettingsManager.Contains(BitbucketCloudUrlsProperty) Then
-                BitbucketCloudUrls = cgSettingsManager.GetString(BitbucketCloudUrlsProperty).Split("|"c)
-            End If
-
-            If cgSettingsManager.Contains(BitbucketServerUrlsProperty) Then
-                BitbucketServerUrls = cgSettingsManager.GetString(BitbucketServerUrlsProperty).Split("|"c)
+            If cgSettingsManager.Contains(BitbucketServerServersProperty) Then
+                BitbucketServerUrls = DecodeServers(cgSettingsManager.GetString(BitbucketServerServersProperty))
             End If
 
         Catch ex As Exception
@@ -132,15 +83,35 @@ Public Class Options
     End Sub
 
 
-    Private Sub SaveSettings()
+    Public Sub Save() _
+        Implements IOptions.Save
+
         Try
-            cgSettingsManager.SetString(GitHubUrlsProperty, String.Join("|", cgGitHubUrls))
-            cgSettingsManager.SetString(BitbucketCloudUrlsProperty, String.Join("|", cgBitbucketCloudUrls))
-            cgSettingsManager.SetString(BitbucketServerUrlsProperty, String.Join("|", cgBitbucketServerUrls))
+            cgSettingsManager.SetString(GitHubEnterpriseServersProperty, EncodeServers(cgGitHubEnterpriseServers))
+            cgSettingsManager.SetString(BitbucketServerServersProperty, EncodeServers(cgBitbucketServerServers))
 
         Catch ex As Exception
             Diagnostics.Debug.WriteLine(ex.Message)
         End Try
     End Sub
+
+
+    Private Shared Function EncodeServers(servers As IEnumerable(Of ServerUrl)) As String
+        Return (
+            <servers>
+                <%=
+                    From server In servers
+                    Select <server base=<%= server.BaseUrl %> ssh=<%= server.SshUrl %>/>
+                %>
+            </servers>
+        ).ToString()
+    End Function
+
+
+    Private Shared Iterator Function DecodeServers(value As String) As IEnumerable(Of ServerUrl)
+        For Each server In XElement.Parse(value).Elements
+            Yield New ServerUrl(server.@base, server.@ssh)
+        Next server
+    End Function
 
 End Class

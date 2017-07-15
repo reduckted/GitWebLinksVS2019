@@ -1,4 +1,5 @@
-﻿Imports System.ComponentModel.Composition
+﻿Imports LibGit2Sharp
+Imports System.ComponentModel.Composition
 
 
 <Export(GetType(ILinkHandler))>
@@ -6,13 +7,9 @@ Public Class BitbucketCloudHandler
     Inherits LinkHandlerBase
 
 
-    Private ReadOnly cgOptions As IOptions
-
-
-    <ImportingConstructor()>
-    Public Sub New(options As IOptions)
-        cgOptions = options
-    End Sub
+    Private Shared ReadOnly ServerUrls As IEnumerable(Of ServerUrl) = {
+        New ServerUrl("https://bitbucket.org", "git@bitbucket.org")
+    }
 
 
     Public Overrides ReadOnly Property Name As String
@@ -22,18 +19,24 @@ Public Class BitbucketCloudHandler
     End Property
 
 
-    Protected Overrides Function GetServerUrls() As IEnumerable(Of String)
-        Return cgOptions.BitbucketCloudUrls
+    Protected Overrides Function GetServerUrls() As IEnumerable(Of ServerUrl)
+        Return ServerUrls
+    End Function
+
+
+    Protected Overrides Function GetBranchName(branch As Branch) As String
+        Return branch.FriendlyName
     End Function
 
 
     Protected Overrides Function CreateUrl(
+            baseUrl As String,
             repositoryPath As String,
             branch As String,
             relativePathToFile As String
         ) As String
 
-        Return String.Join("/", {"https://bitbucket.org", repositoryPath, "src", branch, relativePathToFile})
+        Return String.Join("/", {baseUrl, repositoryPath, "src", branch, relativePathToFile})
     End Function
 
 

@@ -1,11 +1,11 @@
 ﻿Public Interface IOptions
 
-    Property GitHubUrls As IEnumerable(Of String)
+    Property GitHubEnterpriseUrls As IEnumerable(Of ServerUrl)
 
 
-    Property BitbucketCloudUrls As IEnumerable(Of String)
+    Property BitbucketServerUrls As IEnumerable(Of ServerUrl)
 
 
-    Property BitbucketServerUrls As IEnumerable(Of String)
+    Sub Save()
 
 End Interface

@@ -7,7 +7,7 @@ Public Class BitbucketCloudHandlerTests
 
         <Fact()>
         Public Sub ReturnsBitbucket()
-            Assert.Equal("Bitbucket", New BitbucketCloudHandler(MockOptions()).Name)
+            Assert.Equal("Bitbucket", CreateHandler().Name)
         End Sub
 
     End Class
@@ -16,25 +16,25 @@ Public Class BitbucketCloudHandlerTests
     Public Class IsMatchMethod
 
         <Theory()>
-        <MemberData(NameOf(GetBitbucketCloudRemotes), MemberType:=GetType(BitbucketCloudHandlerTests))>
-        Public Sub MatchesBitBucketCloudRemotes(remote As String)
+        <MemberData(NameOf(GetRemotes), MemberType:=GetType(BitbucketCloudHandlerTests))>
+        Public Sub MatchesBitbucketCloudServers(remote As String)
             Dim handler As BitbucketCloudHandler
 
 
-            handler = New BitbucketCloudHandler(MockOptions({"https://bitbucket.org", "git@bitbucket.org"}))
+            handler = CreateHandler()
 
             Assert.True(handler.IsMatch(remote))
         End Sub
 
 
         <Fact()>
-        Public Sub DoesNotMatchServerUrlsNotInSettings()
+        Public Sub DoesNotMatchOtherServerUrls()
             Dim handler As BitbucketCloudHandler
 
 
-            handler = New BitbucketCloudHandler(MockOptions({"https://codeplex.com"}))
+            handler = CreateHandler()
 
-            Assert.False(handler.IsMatch("https://bitbucket.org/atlassian/atlassian-bamboo_rest.git"))
+            Assert.False(handler.IsMatch("https://codeplex.com/foo/bar.git"))
         End Sub
 
     End Class
@@ -43,7 +43,7 @@ Public Class BitbucketCloudHandlerTests
     Public Class MakeUrlMethod
 
         <Theory()>
-        <MemberData(NameOf(GetBitbucketCloudRemotes), MemberType:=GetType(BitbucketCloudHandlerTests))>
+        <MemberData(NameOf(GetRemotes), MemberType:=GetType(BitbucketCloudHandlerTests))>
         Public Sub CreatesCorrectLinkFromRemoteUrl(remote As String)
             Using dir As New TempDirectory
                 Dim handler As BitbucketCloudHandler
@@ -53,53 +53,7 @@ Public Class BitbucketCloudHandlerTests
 
                 info = New GitInfo(dir.FullPath, remote)
                 fileName = Path.Combine(dir.FullPath, "lib\puppet\feature\restclient.rb")
-                handler = New BitbucketCloudHandler(MockOptions())
-
-                Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
-                End Using
-
-                Assert.Equal(
-                    "https://bitbucket.org/atlassian/atlassian-bamboo_rest/src/master/lib/puppet/feature/restclient.rb",
-                    handler.MakeUrl(info, fileName, Nothing)
-                )
-            End Using
-        End Sub
-
-
-        <Fact()>
-        Public Sub CreatesCorrectLinkWhenServerUrlEndsWithSlash()
-            Using dir As New TempDirectory
-                Dim handler As BitbucketCloudHandler
-                Dim info As GitInfo
-                Dim fileName As String
-
-
-                info = New GitInfo(dir.FullPath, "https://bitbucket.org/atlassian/atlassian-bamboo_rest.git")
-                fileName = Path.Combine(dir.FullPath, "lib\puppet\feature\restclient.rb")
-                handler = New BitbucketCloudHandler(MockOptions({"https://bitbucket.org/"}))
-
-                Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
-                End Using
-
-                Assert.Equal(
-                    "https://bitbucket.org/atlassian/atlassian-bamboo_rest/src/master/lib/puppet/feature/restclient.rb",
-                    handler.MakeUrl(info, fileName, Nothing)
-                )
-            End Using
-        End Sub
-
-
-        <Fact()>
-        Public Sub CreatesCorrectLinkWhenServerUrlEndsWithColon()
-            Using dir As New TempDirectory
-                Dim handler As BitbucketCloudHandler
-                Dim info As GitInfo
-                Dim fileName As String
-
-
-                info = New GitInfo(dir.FullPath, "git@bitbucket.org:atlassian/atlassian-bamboo_rest.git")
-                fileName = Path.Combine(dir.FullPath, "lib\puppet\feature\restclient.rb")
-                handler = New BitbucketCloudHandler(MockOptions({"git@bitbucket.org:"}))
+                handler = CreateHandler()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -122,7 +76,7 @@ Public Class BitbucketCloudHandlerTests
 
                 info = New GitInfo(dir.FullPath, "git@bitbucket.org:atlassian/atlassian-bamboo_rest.git")
                 fileName = Path.Combine(dir.FullPath, "lib\puppet\feature\restclient.rb")
-                handler = New BitbucketCloudHandler(MockOptions())
+                handler = CreateHandler()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -145,7 +99,7 @@ Public Class BitbucketCloudHandlerTests
 
                 info = New GitInfo(dir.FullPath, "git@bitbucket.org:atlassian/atlassian-bamboo_rest.git")
                 fileName = Path.Combine(dir.FullPath, "lib\puppet\feature\restclient.rb")
-                handler = New BitbucketCloudHandler(MockOptions())
+                handler = CreateHandler()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -168,14 +122,14 @@ Public Class BitbucketCloudHandlerTests
 
                 info = New GitInfo(dir.FullPath, "git@bitbucket.org:atlassian/atlassian-bamboo_rest.git")
                 fileName = Path.Combine(dir.FullPath, "lib\puppet\feature\restclient.rb")
-                handler = New BitbucketCloudHandler(MockOptions())
+                handler = CreateHandler()
 
                 Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
-                    LibGit2Sharp.Commands.Checkout(repo, repo.CreateBranch("dev"))
+                    LibGit2Sharp.Commands.Checkout(repo, repo.CreateBranch("feature/thing"))
                 End Using
 
                 Assert.Equal(
-                    "https://bitbucket.org/atlassian/atlassian-bamboo_rest/src/dev/lib/puppet/feature/restclient.rb",
+                    "https://bitbucket.org/atlassian/atlassian-bamboo_rest/src/feature/thing/lib/puppet/feature/restclient.rb",
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
@@ -184,24 +138,16 @@ Public Class BitbucketCloudHandlerTests
     End Class
 
 
-    Public Shared Iterator Function GetBitbucketCloudRemotes() As IEnumerable(Of Object())
+    Public Shared Iterator Function GetRemotes() As IEnumerable(Of Object())
         Yield {"https://bitbucket.org/atlassian/atlassian-bamboo_rest.git"}
+        Yield {"https://username@bitbucket.org/atlassian/atlassian-bamboo_rest.git"}
         Yield {"git@bitbucket.org:atlassian/atlassian-bamboo_rest.git"}
+        Yield {"ssh://git@bitbucket.org:atlassian/atlassian-bamboo_rest.git"}
     End Function
 
 
-    Private Shared Function MockOptions(Optional servers() As String = Nothing) As IOptions
-        Dim options As Mock(Of IOptions)
-
-
-        If servers Is Nothing Then
-            servers = {"https://bitbucket.org", "git@bitbucket.org"}
-        End If
-
-        options = New Mock(Of IOptions)
-        options.SetupGet(Function(x) x.BitbucketCloudUrls).Returns(servers)
-
-        Return options.Object
+    Private Shared Function CreateHandler() As BitbucketCloudHandler
+        Return New BitbucketCloudHandler()
     End Function
 
 End Class

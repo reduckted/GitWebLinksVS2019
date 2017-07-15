@@ -8,7 +8,7 @@ Public Class GitHubHandlerTests
 
         <Fact()>
         Public Sub ReturnsGitHub()
-            Assert.Equal("GitHub", New GitHubHandler(MockOptions()).Name)
+            Assert.Equal("GitHub", CreateHandler().Name)
         End Sub
 
     End Class
@@ -17,12 +17,28 @@ Public Class GitHubHandlerTests
     Public Class IsMatchMethod
 
         <Theory()>
-        <MemberData(NameOf(GetGitHubRemotes), MemberType:=GetType(GitHubHandlerTests))>
+        <InlineData("https://github.com/dotnet/corefx.git")>
+        <InlineData("git@github.com:dotnet/corefx.git")>
+        <InlineData("ssh://git@github.com:dotnet/corefx.git")>
+        Public Sub MatchesGitHubServerUrls(remote As String)
+            Dim handler As GitHubHandler
+
+
+            handler = CreateHandler({New ServerUrl("https://local-github", "git@local-github")})
+
+            Assert.True(handler.IsMatch(remote))
+        End Sub
+
+
+        <Theory()>
+        <InlineData("https://local-github/dotnet/corefx.git")>
+        <InlineData("git@local-github:dotnet/corefx.git")>
+        <InlineData("ssh://git@local-github:dotnet/corefx.git")>
         Public Sub MatchesServerUrlsFromSettings(remote As String)
             Dim handler As GitHubHandler
 
 
-            handler = New GitHubHandler(MockOptions({"https://github.com", "git@github.com"}))
+            handler = CreateHandler({New ServerUrl("https://local-github", "git@local-github")})
 
             Assert.True(handler.IsMatch(remote))
         End Sub
@@ -33,9 +49,9 @@ Public Class GitHubHandlerTests
             Dim handler As GitHubHandler
 
 
-            handler = New GitHubHandler(MockOptions({"https://codeplex.com"}))
+            handler = CreateHandler({New ServerUrl("https://local-github", "git@local-github")})
 
-            Assert.False(handler.IsMatch("https://github.com/dotnet/corefx.git"))
+            Assert.False(handler.IsMatch("https://codeplex.com/foo/bar.git"))
         End Sub
 
     End Class
@@ -44,7 +60,7 @@ Public Class GitHubHandlerTests
     Public Class MakeUrlMethod
 
         <Theory()>
-        <MemberData(NameOf(GetGitHubRemotes), MemberType:=GetType(GitHubHandlerTests))>
+        <MemberData(NameOf(GetCloudRemotes), MemberType:=GetType(GitHubHandlerTests))>
         Public Sub CreatesCorrectLinkFromRemoteUrl(remote As String)
             Using dir As New TempDirectory
                 Dim handler As GitHubHandler
@@ -54,7 +70,7 @@ Public Class GitHubHandlerTests
 
                 info = New GitInfo(dir.FullPath, remote)
                 fileName = Path.Combine(dir.FullPath, "src\System.IO.FileSystem\src\System\IO\Directory.cs")
-                handler = New GitHubHandler(MockOptions())
+                handler = CreateHandler()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -75,15 +91,15 @@ Public Class GitHubHandlerTests
                 Dim fileName As String
 
 
-                info = New GitInfo(dir.FullPath, "https://github.com/dotnet/corefx.git")
+                info = New GitInfo(dir.FullPath, "https://local-github/dotnet/corefx.git")
                 fileName = Path.Combine(dir.FullPath, "src\System.IO.FileSystem\src\System\IO\Directory.cs")
-                handler = New GitHubHandler(MockOptions({"https://github.com/"}))
+                handler = CreateHandler({New ServerUrl("https://local-github/", "git@local-github")})
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
 
                 Assert.Equal(
-                    "https://github.com/dotnet/corefx/blob/master/src/System.IO.FileSystem/src/System/IO/Directory.cs",
+                    "https://local-github/dotnet/corefx/blob/master/src/System.IO.FileSystem/src/System/IO/Directory.cs",
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
@@ -98,15 +114,15 @@ Public Class GitHubHandlerTests
                 Dim fileName As String
 
 
-                info = New GitInfo(dir.FullPath, "git@github.com:dotnet/corefx.git")
+                info = New GitInfo(dir.FullPath, "git@local-github:dotnet/corefx.git")
                 fileName = Path.Combine(dir.FullPath, "src\System.IO.FileSystem\src\System\IO\Directory.cs")
-                handler = New GitHubHandler(MockOptions({"git@github.com:"}))
+                handler = CreateHandler({New ServerUrl("https://local-github", "git@local-github:")})
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
 
                 Assert.Equal(
-                    "https://github.com/dotnet/corefx/blob/master/src/System.IO.FileSystem/src/System/IO/Directory.cs",
+                    "https://local-github/dotnet/corefx/blob/master/src/System.IO.FileSystem/src/System/IO/Directory.cs",
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
@@ -123,7 +139,7 @@ Public Class GitHubHandlerTests
 
                 info = New GitInfo(dir.FullPath, "git@github.com:dotnet/corefx.git")
                 fileName = Path.Combine(dir.FullPath, "src\System.IO.FileSystem\src\System\IO\Directory.cs")
-                handler = New GitHubHandler(MockOptions())
+                handler = CreateHandler()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -146,7 +162,7 @@ Public Class GitHubHandlerTests
 
                 info = New GitInfo(dir.FullPath, "git@github.com:dotnet/corefx.git")
                 fileName = Path.Combine(dir.FullPath, "src\System.IO.FileSystem\src\System\IO\Directory.cs")
-                handler = New GitHubHandler(MockOptions())
+                handler = CreateHandler()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -169,14 +185,14 @@ Public Class GitHubHandlerTests
 
                 info = New GitInfo(dir.FullPath, "git@github.com:dotnet/corefx.git")
                 fileName = Path.Combine(dir.FullPath, "src\System.IO.FileSystem\src\System\IO\Directory.cs")
-                handler = New GitHubHandler(MockOptions())
+                handler = CreateHandler()
 
                 Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
-                    LibGit2Sharp.Commands.Checkout(repo, repo.CreateBranch("dev"))
+                    LibGit2Sharp.Commands.Checkout(repo, repo.CreateBranch("feature/thing"))
                 End Using
 
                 Assert.Equal(
-                    "https://github.com/dotnet/corefx/blob/dev/src/System.IO.FileSystem/src/System/IO/Directory.cs",
+                    "https://github.com/dotnet/corefx/blob/feature/thing/src/System.IO.FileSystem/src/System/IO/Directory.cs",
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
@@ -185,24 +201,26 @@ Public Class GitHubHandlerTests
     End Class
 
 
-    Private Shared Iterator Function GetGitHubRemotes() As IEnumerable(Of Object())
+    Private Shared Iterator Function GetCloudRemotes() As IEnumerable(Of Object())
         Yield {"https://github.com/dotnet/corefx.git"}
+        Yield {"https://username@github.com/dotnet/corefx.git"}
         Yield {"git@github.com:dotnet/corefx.git"}
+        Yield {"ssh://git@github.com:dotnet/corefx.git"}
     End Function
 
 
-    Private Shared Function MockOptions(Optional servers() As String = Nothing) As IOptions
+    Private Shared Function CreateHandler(Optional servers() As ServerUrl = Nothing) As GitHubHandler
         Dim options As Mock(Of IOptions)
 
 
         If servers Is Nothing Then
-            servers = {"https://github.com", "git@github.com"}
+            servers = {}
         End If
 
         options = New Mock(Of IOptions)
-        options.SetupGet(Function(x) x.GitHubUrls).Returns(servers)
+        options.SetupGet(Function(x) x.GitHubEnterpriseUrls).Returns(servers)
 
-        Return options.Object
+        Return New GitHubHandler(options.Object)
     End Function
 
 End Class
