@@ -27,8 +27,7 @@ Public Class CopyLinkToSolutionExplorerItemCommand
 
 
     Protected Overrides Iterator Function GetCommandIDs() As IEnumerable(Of CommandID)
-        Yield Commands.CopyLinkToFileItem
-        Yield Commands.CopyLinkToFolderItem
+        Yield Commands.CopyLinkToSolutionExplorerItem
     End Function
 
 

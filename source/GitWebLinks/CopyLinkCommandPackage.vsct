@@ -11,37 +11,20 @@
         <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
       </Group>
 
-      <Group guid="guidCopyLinkCommandPackageCmdSet" id="FileNodeGroup" priority="0x0601">
-        <!-- Priority is after IDG_VS_CTXT_ITEM_TRANSFER -->
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
-      </Group>
-
-      <Group guid="guidCopyLinkCommandPackageCmdSet" id="FolderNodeGroup" priority="0x0501">
-        <!-- Priority is after IDG_VS_CTXT_FOLDER_TRANSFER -->
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE"/>
-      </Group>
-
-      <Group guid="guidCopyLinkCommandPackageCmdSet" id="ProjectNodeGroup" priority="0x0701">
-        <!-- Priority is after IDG_VS_CTXT_PROJECT_TRANSFER -->
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE"/>
-      </Group>
-
-      <Group guid="guidCopyLinkCommandPackageCmdSet" id="SolutionNodeGroup" priority="0x0801">
-        <!-- Priority is after IDG_VS_CTXT_SOLUTION_TRANSFER -->
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_SOLNNODE"/>
-      </Group>
+      <Group guid="guidCopyLinkCommandPackageCmdSet" id="SolutionExplorerGroup" priority="0x0100"/>
     </Groups>
 
     <Buttons>
       <Button guid="guidCopyLinkCommandPackageCmdSet" id="CopyLinkToSelectionCommandId" priority="0x0100" type="Button">
         <Parent guid="guidCopyLinkCommandPackageCmdSet" id="CodeWindowGroup"/>
         <Icon guid="ImageCatalogGuid" id="Git" />
-        <CommandFlag>TextChanges</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
         <Strings>
-          <CommandName>CopyWebLinkToLine</CommandName>
-          <ButtonText>Copy Link to Line</ButtonText>
+          <CanonicalName>GitWebLinks.CopyLinkToSelection</CanonicalName>
+          <LocCanonicalName>GitWebLinks.CopyLinkToSelection</LocCanonicalName>
+          <ButtonText>Copy Link to Selection</ButtonText>
         </Strings>
       </Button>
 
@@ -49,80 +32,63 @@
         <!-- Priority is after cmdidCopyFullPathName -->
         <Parent guid="guidSHLMainMenu" id="IDG_VS_EZ_DOCWINDOWPATHOPS"/>
         <Icon guid="ImageCatalogGuid" id="Git" />
-        <CommandFlag>TextChanges</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <CommandFlag>IconIsMoniker</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
         <Strings>
-          <CommandName>CopyWebLinkToLine</CommandName>
-          <ButtonText>Copy Link to File</ButtonText>
+          <CanonicalName>GitWebLinks.CopyLinkToCurrentFile</CanonicalName>
+          <LocCanonicalName>GitWebLinks.CopyLinkToCurrentFile</LocCanonicalName>
+          <ButtonText>Copy Link to Current File</ButtonText>
         </Strings>
       </Button>
 
       <Button guid="guidCopyLinkCommandPackageCmdSet" id="CopyLinkToFileItemCommandId" priority="0x0100" type="Button">
-        <Parent guid="guidCopyLinkCommandPackageCmdSet" id="FileNodeGroup"/>
+        <Parent guid="guidCopyLinkCommandPackageCmdSet" id="SolutionExplorerGroup"/>
         <Icon guid="ImageCatalogGuid" id="Git" />
-        <CommandFlag>TextChanges</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <CommandFlag>IconIsMoniker</CommandFlag>
-        <Strings>
-          <CommandName>CopyWebLinkToFile</CommandName>
-          <ButtonText>Copy Link to File</ButtonText>
-        </Strings>
-      </Button>
-
-      <Button guid="guidCopyLinkCommandPackageCmdSet" id="CopyLinkToFileItemCommandId" priority="0x0100" type="Button">
-        <Parent guid="guidCopyLinkCommandPackageCmdSet" id="ProjectNodeGroup"/>
-        <Icon guid="ImageCatalogGuid" id="Git" />
         <CommandFlag>TextChanges</CommandFlag>
-        <CommandFlag>DynamicVisibility</CommandFlag>
-        <CommandFlag>IconIsMoniker</CommandFlag>
         <Strings>
-          <CommandName>CopyWebLinkToFile</CommandName>
-          <ButtonText>Copy Link to Project</ButtonText>
-        </Strings>
-      </Button>
-
-      <Button guid="guidCopyLinkCommandPackageCmdSet" id="CopyLinkToFileItemCommandId" priority="0x0100" type="Button">
-        <Parent guid="guidCopyLinkCommandPackageCmdSet" id="SolutionNodeGroup"/>
-        <Icon guid="ImageCatalogGuid" id="Git" />
-        <CommandFlag>TextChanges</CommandFlag>
-        <CommandFlag>DynamicVisibility</CommandFlag>
-        <CommandFlag>IconIsMoniker</CommandFlag>
-        <Strings>
-          <CommandName>CopyWebLinkToFile</CommandName>
-          <ButtonText>Copy Link to Solution</ButtonText>
-        </Strings>
-      </Button>
-
-      <Button guid="guidCopyLinkCommandPackageCmdSet" id="CopyLinkToFolderItemCommandId" priority="0x0100" type="Button">
-        <Parent guid="guidCopyLinkCommandPackageCmdSet" id="FolderNodeGroup"/>
-        <Icon guid="ImageCatalogGuid" id="Git" />
-        <CommandFlag>TextChanges</CommandFlag>
-        <CommandFlag>DynamicVisibility</CommandFlag>
-        <CommandFlag>IconIsMoniker</CommandFlag>
-        <Strings>
-          <CommandName>CopyWebLinkToFile</CommandName>
-          <ButtonText>Copy Link to Folder</ButtonText>
+          <CanonicalName>GitWebLinks.CopyLinkToSolutionExplorerItem</CanonicalName>
+          <LocCanonicalName>GitWebLinks.CopyLinkToSolutionExplorerItem</LocCanonicalName>
+          <ButtonText>Copy Link to Solution Explorer Item</ButtonText>
         </Strings>
       </Button>
     </Buttons>
   </Commands>
+
+  <CommandPlacements>
+    <CommandPlacement guid="guidCopyLinkCommandPackageCmdSet" id="SolutionExplorerGroup" priority="0x0601">
+      <!-- Priority is after IDG_VS_CTXT_ITEM_TRANSFER -->
+      <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidCopyLinkCommandPackageCmdSet" id="SolutionExplorerGroup" priority="0x0501">
+      <!-- Priority is after IDG_VS_CTXT_FOLDER_TRANSFER -->
+      <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE"/>
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidCopyLinkCommandPackageCmdSet" id="SolutionExplorerGroup" priority="0x0701">
+      <!-- Priority is after IDG_VS_CTXT_PROJECT_TRANSFER -->
+      <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE"/>
+    </CommandPlacement>
+
+    <CommandPlacement guid="guidCopyLinkCommandPackageCmdSet" id="SolutionExplorerGroup" priority="0x0801">
+      <!-- Priority is after IDG_VS_CTXT_SOLUTION_TRANSFER -->
+      <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_SOLNNODE"/>
+    </CommandPlacement>
+  </CommandPlacements>
 
   <Symbols>
     <GuidSymbol name="guidCopyLinkCommandPackage" value="{2616be63-dcab-4321-8473-d332f6e89767}"/>
 
     <GuidSymbol name="guidCopyLinkCommandPackageCmdSet" value="{69d3bbf2-3b03-47a3-8048-1aeb0a3cff92}">
       <IDSymbol name="CodeWindowGroup" value="0x1000"/>
-      <IDSymbol name="FileNodeGroup" value="0x2000"/>
-      <IDSymbol name="ProjectNodeGroup" value="0x2001"/>
-      <IDSymbol name="SolutionNodeGroup" value="0x2002"/>
-      <IDSymbol name="FolderNodeGroup" value="0x2003"/>
+      <IDSymbol name="SolutionExplorerGroup" value="0x2000"/>
 
       <IDSymbol name="CopyLinkToSelectionCommandId" value="200"/>
       <IDSymbol name="CopyLinkToCurrentFileCommandId" value="201"/>
-
-      <IDSymbol name="CopyLinkToFileItemCommandId" value="300"/>
-      <IDSymbol name="CopyLinkToFolderItemCommandId" value="301"/>
+      <IDSymbol name="CopyLinkToFileItemCommandId" value="202"/>
     </GuidSymbol>
   </Symbols>
 </CommandTable>

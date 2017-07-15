@@ -7,8 +7,6 @@ Public NotInheritable Class Commands
 
     Public Shared ReadOnly CopyLinkToSelection As New CommandID(CommandSet, 200)
     Public Shared ReadOnly CopyLinkToCurrentFile As New CommandID(CommandSet, 201)
-
-    Public Shared ReadOnly CopyLinkToFileItem As New CommandID(CommandSet, 300)
-    Public Shared ReadOnly CopyLinkToFolderItem As New CommandID(CommandSet, 301)
+    Public Shared ReadOnly CopyLinkToSolutionExplorerItem As New CommandID(CommandSet, 202)
 
 End Class

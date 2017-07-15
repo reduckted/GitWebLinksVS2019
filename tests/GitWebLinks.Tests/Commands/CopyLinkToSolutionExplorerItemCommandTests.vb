@@ -1,8 +1,7 @@
-﻿Imports Microsoft.VisualStudio.Shell
-Imports System.ComponentModel.Design
-Imports System.Windows
-Imports EnvDTE
+﻿Imports EnvDTE
 Imports EnvDTE80
+Imports Microsoft.VisualStudio.Shell
+Imports System.ComponentModel.Design
 
 Public Class CopyLinkToSolutionExplorerItemCommandTests
 
@@ -37,10 +36,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             command.Initialize(commandService.Object)
 
             Assert.Equal(
-                {
-                    Commands.CopyLinkToFileItem,
-                    Commands.CopyLinkToFolderItem
-                },
+                {Commands.CopyLinkToSolutionExplorerItem},
                 addedCommands.Select(Function(x) x.CommandID)
             )
         End Sub
@@ -63,7 +59,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(DirectCast(Nothing, LinkInfo))
 
-            command = AddCommand(Commands.CopyLinkToFileItem, dteProvider, infoProvider.Object)
+            command = AddCommand(dteProvider, infoProvider.Object)
             status = command.OleStatus
 
             Assert.False(command.Visible)
@@ -90,7 +86,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
 
-            command = AddCommand(Commands.CopyLinkToFileItem, dteProvider, infoProvider.Object)
+            command = AddCommand(dteProvider, infoProvider.Object)
             status = command.OleStatus
 
             Assert.True(command.Visible)
@@ -119,7 +115,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
 
-            command = AddCommand(Commands.CopyLinkToFileItem, dteProvider, infoProvider.Object)
+            command = AddCommand(dteProvider, infoProvider.Object)
             status = command.OleStatus
 
             Assert.True(command.Visible)
@@ -149,7 +145,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
 
-            command = AddCommand(Commands.CopyLinkToFileItem, dteProvider, infoProvider.Object)
+            command = AddCommand(dteProvider, infoProvider.Object)
             status = command.OleStatus
 
             Assert.True(command.Visible)
@@ -179,37 +175,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
 
-            command = AddCommand(Commands.CopyLinkToFileItem, dteProvider, infoProvider.Object)
-            status = command.OleStatus
-
-            Assert.True(command.Visible)
-            Assert.Equal("Copy link to Foo", command.Text)
-        End Sub
-
-
-        <Fact()>
-        Public Sub ShowsTheCommandForFolders()
-            Dim command As OleMenuCommand
-            Dim dteProvider As IDteProvider
-            Dim infoProvider As Mock(Of ILinkInfoProvider)
-            Dim handler As Mock(Of ILinkHandler)
-            Dim status As Integer
-            Dim info As LinkInfo
-
-
-            dteProvider = MockDteProvider(
-                selectedItemKind:=SolutionExplorerItemKind.Folder
-            )
-
-            handler = New Mock(Of ILinkHandler)
-            handler.SetupGet(Function(x) x.Name).Returns("Foo")
-
-            info = New LinkInfo(New GitInfo("a", "b"), handler.Object)
-
-            infoProvider = New Mock(Of ILinkInfoProvider)
-            infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
-
-            command = AddCommand(Commands.CopyLinkToFolderItem, dteProvider, infoProvider.Object)
+            command = AddCommand(dteProvider, infoProvider.Object)
             status = command.OleStatus
 
             Assert.True(command.Visible)
@@ -248,7 +214,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
 
             clipboard = New Mock(Of IClipboard)
 
-            command = AddCommand(Commands.CopyLinkToFileItem, dteProvider, infoProvider.Object, clipboard.Object)
+            command = AddCommand(dteProvider, infoProvider.Object, clipboard.Object)
             command.Invoke()
 
             clipboard.Verify(Sub(x) x.SetText("http://foo.bar"), Times.Once)
@@ -258,7 +224,6 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
 
 
     Private Shared Function AddCommand(
-            id As CommandID,
             dteProvider As IDteProvider,
             infoProvider As ILinkInfoProvider,
             Optional clipboard As IClipboard = Nothing
@@ -281,7 +246,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
         command = New CopyLinkToSolutionExplorerItemCommand(dteProvider, infoProvider, clipboard)
         command.Initialize(commandService.Object)
 
-        Return commands.Cast(Of OleMenuCommand).First(Function(x) x.CommandID.Equals(id))
+        Return commands.Cast(Of OleMenuCommand).First()
     End Function
 
 
