@@ -34,7 +34,7 @@ Public Class CopyLinkToSolutionExplorerItemCommand
     Protected Overrides Sub BeforeQueryStatus(command As OleMenuCommand)
         If (cgLinkInfoProvider.LinkInfo IsNot Nothing) AndAlso (Not String.IsNullOrEmpty(GetSelectedFilePath())) Then
             command.Visible = True
-            command.Text = $"Copy link to {cgLinkInfoProvider.LinkInfo.Handler.Name}"
+            command.Text = $"Copy Link to {cgLinkInfoProvider.LinkInfo.Handler.Name}"
 
         Else
             command.Visible = False

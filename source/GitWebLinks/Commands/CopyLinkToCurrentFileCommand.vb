@@ -35,7 +35,7 @@ Public Class CopyLinkToCurrentFileCommand
     Protected Overrides Sub BeforeQueryStatus(command As OleMenuCommand)
         If (cgLinkInfoProvider.LinkInfo IsNot Nothing) AndAlso (Dte.ActiveDocument IsNot Nothing) Then
             command.Visible = True
-            command.Text = $"Copy link to {cgLinkInfoProvider.LinkInfo.Handler.Name}"
+            command.Text = $"Copy Link to {cgLinkInfoProvider.LinkInfo.Handler.Name}"
 
         Else
             command.Visible = False
