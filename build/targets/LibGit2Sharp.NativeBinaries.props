@@ -10,11 +10,6 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <IncludeInVSIX>true</IncludeInVSIX>
         </Content>
-        <Content Include="$(MSBuildThisFileDirectory)\..\..\packages\LibGit2Sharp.NativeBinaries.1.0.185\runtimes\win7-x86\native\git2-15e1193.pdb">
-            <Link>lib\win32\x86\git2-15e1193.pdb</Link>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <IncludeInVSIX>true</IncludeInVSIX>
-        </Content>
         <None Include="$(MSBuildThisFileDirectory)\..\..\packages\LibGit2Sharp.NativeBinaries.1.0.185\libgit2\LibGit2Sharp.dll.config">
             <Link>LibGit2Sharp.dll.config</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
