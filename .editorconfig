@@ -10,6 +10,7 @@ insert_final_newline = true
 
 [*.vbproj]
 indent_size = 2
+insert_final_newline = false
 
 [*.vsct]
 indent_size = 2
