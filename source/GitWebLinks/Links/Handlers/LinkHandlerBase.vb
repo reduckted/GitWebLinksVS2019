@@ -1,4 +1,5 @@
 ﻿Imports LibGit2Sharp
+Imports System.IO
 Imports System.Text.RegularExpressions
 
 
@@ -39,6 +40,11 @@ Public MustInherit Class LinkHandlerBase
         Dim baseUrl As String
 
 
+        ' Sometimes Visual Studio gives us the file path in lowercase.
+        ' No idea why it does that, but we need to correct it because
+        ' the case-mismatched names don't play well with the Git websites.
+        filePath = FixFilePathCasing(filePath)
+
         fixedRemoteUrl = FixRemoteUrl(gitInfo.RemoteUrl)
         server = GetMatchingServerUrl(fixedRemoteUrl)
 
@@ -72,6 +78,33 @@ Public MustInherit Class LinkHandlerBase
         End If
 
         Return url
+    End Function
+
+
+    Private Function FixFilePathCasing(filePath As String) As String
+        Dim dir As DirectoryInfo
+
+
+        ' Adpated from: https://stackoverflow.com/a/326153/4397397
+
+        If (Not File.Exists(filePath)) AndAlso (Not Directory.Exists(filePath)) Then
+            Return filePath
+        End If
+
+        dir = New DirectoryInfo(filePath)
+
+        ' If there's no parent, then this is the drive. We don't care
+        ' about the drive because the drive is always above the repository
+        ' root. But for the sake of consistency, we will make it uppercase.
+        If dir.Parent Is Nothing Then
+            Return dir.Name.ToUpper()
+        End If
+
+        ' Fix the parent path and get the correct name of the file.
+        Return Path.Combine(
+            FixFilePathCasing(dir.Parent.FullName),
+            dir.Parent.GetFileSystemInfos(dir.Name)(0).Name
+        )
     End Function
 
 

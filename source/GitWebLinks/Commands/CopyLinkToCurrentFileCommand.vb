@@ -50,7 +50,7 @@ Public Class CopyLinkToCurrentFileCommand
 
             filePath = Dte.ActiveDocument.FullName
 
-            If filePath IsNot Nothing Then
+            If Not String.IsNullOrEmpty(filePath) Then
                 Dim textSelection As TextSelection
                 Dim lineSelection As LineSelection
                 Dim url As String
