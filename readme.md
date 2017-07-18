@@ -1,5 +1,7 @@
 ﻿# Git Web Links
 
+Get it from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=reduckted.GitWebLinks).
+
 Copy links to files in their online Git repositories from inside Visual Studio 2017.
 
 Works with GitHub, GitHub Enterprise, Bitbucket Server and Bitbucket Cloud.
