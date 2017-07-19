@@ -1,5 +1,5 @@
-﻿Imports System.ComponentModel.Composition
-Imports EnvDTE
+﻿Imports EnvDTE
+Imports System.ComponentModel.Composition
 
 
 <Export(GetType(ILinkInfoProvider))>
@@ -33,7 +33,12 @@ Public Class LinkInfoProvider
 
 
     Private Sub OnSolutionOpened()
-        cgCurrentLinkInfo = cgLinkInfoFinder.Find(IO.Path.GetDirectoryName(cgDte.Solution.FullName))
+        ' When a new solution is created this event is raised, but the solution doesn't have a file 
+        ' name at that stage, so we can't get the link info for it. But, once the project is fully 
+        ' created, this event is raised again, and we can get the link info at that point.
+        If Not String.IsNullOrEmpty(cgDte.Solution?.FullName) Then
+            cgCurrentLinkInfo = cgLinkInfoFinder.Find(IO.Path.GetDirectoryName(cgDte.Solution.FullName))
+        End If
     End Sub
 
 
