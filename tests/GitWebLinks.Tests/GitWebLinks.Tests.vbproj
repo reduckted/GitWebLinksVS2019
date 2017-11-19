@@ -157,6 +157,7 @@
     <Compile Include="Commands\CopyLinkToSolutionExplorerItemCommandTests.vb" />
     <Compile Include="Git\GitInfoFinderTests.vb" />
     <Compile Include="Links\Handlers\BitbucketServerHandlerTests.vb" />
+    <Compile Include="Links\Handlers\VisualStudioTeamServicesHandlerTests.vb" />
     <Compile Include="Links\LinkInfoTests.vb" />
     <Compile Include="Links\LinkInfoProviderTests.vb" />
     <Compile Include="Git\GitInfoTests.vb" />

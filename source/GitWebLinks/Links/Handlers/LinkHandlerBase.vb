@@ -1,4 +1,4 @@
-﻿Imports LibGit2Sharp
+Imports LibGit2Sharp
 Imports System.IO
 Imports System.Text.RegularExpressions
 
@@ -108,7 +108,7 @@ Public MustInherit Class LinkHandlerBase
     End Function
 
 
-    Private Function GetMatchingServerUrl(
+    Protected Overridable Function GetMatchingServerUrl(
             remoteUrl As String
         ) As ServerUrl
 
@@ -117,6 +117,12 @@ Public MustInherit Class LinkHandlerBase
             Where remoteUrl.StartsWith(server.BaseUrl, StringComparison.Ordinal) _
             OrElse remoteUrl.StartsWith(server.SshUrl, StringComparison.Ordinal)
         ).FirstOrDefault()
+    End Function
+
+
+    Protected Overridable Function GetServerUrls() As IEnumerable(Of ServerUrl)
+        ' Derived classes should override this if they don't overrides `GetMatchingServerUrl`.
+        Throw New NotSupportedException()
     End Function
 
 
@@ -130,7 +136,7 @@ Public MustInherit Class LinkHandlerBase
 
 
             ' This will be an HTTP address. Check if there's 
-            ' a username in the URL And if there Is, remove it.
+            ' a username in the URL And if there is, remove it.
             match = UsernamePattern.Match(remoteUrl)
 
             If match.Success Then
@@ -140,9 +146,6 @@ Public MustInherit Class LinkHandlerBase
 
         Return remoteUrl
     End Function
-
-
-    Protected MustOverride Function GetServerUrls() As IEnumerable(Of ServerUrl)
 
 
     Private Function GetRepositoryPath(
@@ -160,7 +163,7 @@ Public MustInherit Class LinkHandlerBase
         End If
 
         ' The server URL we matched against may not have ended 
-        ' with a slash (For HTTPS paths) or a colon (For Git paths), 
+        ' with a slash (for HTTPS paths) or a colon (for Git paths), 
         ' which means the path might start with that. Trim that off now.
         If path.Length > 0 Then
             If (path(0) = "/"c) OrElse (path(0) = ":"c) Then

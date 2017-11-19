@@ -80,6 +80,7 @@
     <Compile Include="Git\IGitInfoFinder.vb" />
     <Compile Include="Links\Handlers\BitbucketServerHandler.vb" />
     <Compile Include="Links\Handlers\LinkHandlerBase.vb" />
+    <Compile Include="Links\Handlers\VisualStudioTeamServicesHandler.vb" />
     <Compile Include="Links\ILinkInfoFinder.vb" />
     <Compile Include="Links\ILinkInfoProvider.vb" />
     <Compile Include="Links\LinkInfo.vb" />
