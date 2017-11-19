@@ -17,9 +17,7 @@ Public Class GitHubHandlerTests
     Public Class IsMatchMethod
 
         <Theory()>
-        <InlineData("https://github.com/dotnet/corefx.git")>
-        <InlineData("git@github.com:dotnet/corefx.git")>
-        <InlineData("ssh://git@github.com:dotnet/corefx.git")>
+        <MemberData(NameOf(GetCloudRemotes), MemberType:=GetType(GitHubHandlerTests))>
         Public Sub MatchesGitHubServerUrls(remote As String)
             Dim handler As GitHubHandler
 

@@ -28,9 +28,8 @@ Public Class BitbucketServerHandlerTests
         End Sub
 
 
-        <Theory()>
-        <MemberData(NameOf(GetRemotes), MemberType:=GetType(BitbucketServerHandlerTests))>
-        Public Sub DoesNotMatchServerUrlsNotInSettings(remote As String)
+        <Fact()>
+        Public Sub DoesNotMatchServerUrlsNotInSettings()
             Dim handler As BitbucketServerHandler
 
 
@@ -105,7 +104,7 @@ Public Class BitbucketServerHandlerTests
                 Dim fileName As String
 
 
-                info = New GitInfo(dir.FullPath, GetHttpRemoteUrl())
+                info = New GitInfo(dir.FullPath, GetHttpsRemoteUrl())
                 fileName = Path.Combine(dir.FullPath, "lib\server\main.cs")
                 handler = CreateHandler({New ServerUrl("https://local-bitbucket:7990/context/", "git@local-bitbucket:7999")})
 
@@ -193,14 +192,14 @@ Public Class BitbucketServerHandlerTests
 
 
     Public Shared Iterator Function GetRemotes() As IEnumerable(Of Object())
-        Yield {GetHttpRemoteUrl()}
-        Yield {GetHttpRemoteUrl().Replace("https://", "https://username@")}
+        Yield {GetHttpsRemoteUrl()}
+        Yield {GetHttpsRemoteUrl().Replace("https://", "https://username@")}
         Yield {GetGitRemoteUrl()}
         Yield {$"ssh://{GetGitRemoteUrl()}"}
     End Function
 
 
-    Private Shared Function GetHttpRemoteUrl() As String
+    Private Shared Function GetHttpsRemoteUrl() As String
         Return "https://local-bitbucket:7990/context/scm/bb/my-code.git"
     End Function
 
