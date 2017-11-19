@@ -4,7 +4,12 @@ Get it from the [Visual Studio Marketplace](https://marketplace.visualstudio.com
 
 Copy links to files in their online Git repositories from inside Visual Studio 2017.
 
-Works with GitHub, GitHub Enterprise, Bitbucket Server and Bitbucket Cloud.
+Works with:
+* GitHub
+* GitHub Enterprise
+* Bitbucket Server
+* Bitbucket Cloud
+* Visual Studio Team Services
 
 :information_source: For GitHub Enterprise and Bitbucket Server, there is some configuration required. [See below for more details](#github-enterprise-and-bitbucket-server).
 

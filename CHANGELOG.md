@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.0
+
+* Added support for Visual Studio Team Services.
+
 ## v1.0.2
 
 * Fixed a bug that caused an error when creating a new solution.
