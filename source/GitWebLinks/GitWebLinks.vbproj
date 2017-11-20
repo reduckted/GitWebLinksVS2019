@@ -90,6 +90,7 @@
     <Compile Include="Links\Handlers\GitHubHandler.vb" />
     <Compile Include="Links\Handlers\ILinkHandler.vb" />
     <Compile Include="Links\Handlers\LineSelection.vb" />
+    <Compile Include="Options\LinkType.vb" />
     <Compile Include="Options\OptionsPageControlViewModel.vb" />
     <Compile Include="Options\ServerUrl.vb" />
     <Compile Include="Options\IOptions.vb" />

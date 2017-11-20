@@ -33,6 +33,10 @@ You can also copy a link to a file or folder from Solution Explorer.
 
 ![Copy Link to Solution Explorer Item](media/copy-solution-explorer.png)
 
+## Link Format
+
+Links can be created using the current commit hash, or the current branch name. The current commit hash is the default format. This can be changed by going to _Tools -> Options -> Git Web Links_.
+
 ## GitHub Enterprise and Bitbucket Server
 
 If you use GitHub Enterprise or Bitbucket Server, you will need to tell this extension the URLs of those servers. To do that, go to _Tools -> Options -> Git Web Links_.

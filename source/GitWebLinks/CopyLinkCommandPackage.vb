@@ -1,4 +1,4 @@
-﻿Imports Microsoft.VisualStudio.ComponentModelHost
+Imports Microsoft.VisualStudio.ComponentModelHost
 Imports Microsoft.VisualStudio.Shell
 Imports Microsoft.VisualStudio.Shell.Interop
 Imports System.ComponentModel.Design
@@ -10,7 +10,7 @@ Imports System.Runtime.InteropServices
 <ProvideMenuResource("Menus.ctmenu", 1)>
 <Guid(CopyLinkCommandPackage.PackageGuidString)>
 <ProvideAutoLoad(UIContextGuids80.SolutionExists)>
-<ProvideOptionPage(GetType(OptionsPage), "Git Web Links", "Local Servers", 0, 0, True)>
+<ProvideOptionPage(GetType(OptionsPage), "Git Web Links", "General", 0, 0, True)>
 Public NotInheritable Class CopyLinkCommandPackage
     Inherits Package
 

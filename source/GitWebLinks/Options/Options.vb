@@ -1,4 +1,4 @@
-﻿Imports System.ComponentModel.Composition
+Imports System.ComponentModel.Composition
 Imports System.Xml.Linq
 
 
@@ -9,6 +9,7 @@ Public Class Options
 
     Private Const GitHubEnterpriseServersProperty As String = "GitHubEnterpriseServers"
     Private Const BitbucketServerServersProperty As String = "BitbucketServerServers"
+    Private Const LinkTypeProperty As String = "LinkType"
 
 
     Private Shared ReadOnly DefaultGitHubEnterpriseServers() As ServerUrl = {
@@ -24,6 +25,7 @@ Public Class Options
     Private ReadOnly cgSettingsManager As ISettingsManager
     Private ReadOnly cgGitHubEnterpriseServers As New List(Of ServerUrl)(DefaultGitHubEnterpriseServers)
     Private ReadOnly cgBitbucketServerServers As New List(Of ServerUrl)(DefaultBitbucketServerServers)
+    Private cgLinkType As LinkType
 
 
     <ImportingConstructor()>
@@ -67,6 +69,19 @@ Public Class Options
     End Property
 
 
+    Public Property LinkType As LinkType _
+        Implements IOptions.LinkType
+
+        Get
+            Return cgLinkType
+        End Get
+
+        Set
+            cgLinkType = Value
+        End Set
+    End Property
+
+
     Private Sub LoadSettings()
         Try
             If cgSettingsManager.Contains(GitHubEnterpriseServersProperty) Then
@@ -75,6 +90,15 @@ Public Class Options
 
             If cgSettingsManager.Contains(BitbucketServerServersProperty) Then
                 BitbucketServerUrls = DecodeServers(cgSettingsManager.GetString(BitbucketServerServersProperty))
+            End If
+
+            If cgSettingsManager.Contains(LinkTypeProperty) Then
+                Dim value As Integer
+
+
+                If Integer.TryParse(cgSettingsManager.GetString(LinkTypeProperty), value) Then
+                    LinkType = DirectCast(value, LinkType)
+                End If
             End If
 
         Catch ex As Exception
@@ -89,6 +113,7 @@ Public Class Options
         Try
             cgSettingsManager.SetString(GitHubEnterpriseServersProperty, EncodeServers(cgGitHubEnterpriseServers))
             cgSettingsManager.SetString(BitbucketServerServersProperty, EncodeServers(cgBitbucketServerServers))
+            cgSettingsManager.SetString(LinkTypeProperty, CInt(LinkType).ToString())
 
         Catch ex As Exception
             Diagnostics.Debug.WriteLine(ex.Message)

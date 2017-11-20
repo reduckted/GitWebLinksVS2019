@@ -1,4 +1,4 @@
-﻿Imports Microsoft.VisualStudio.ComponentModelHost
+Imports Microsoft.VisualStudio.ComponentModelHost
 Imports Microsoft.VisualStudio.Shell
 Imports System.ComponentModel
 Imports System.Runtime.InteropServices
@@ -47,6 +47,9 @@ Public Class OptionsPage
         For Each server In ToModel(options.BitbucketServerUrls)
             cgViewModel.BitbucketServerUrls.Add(server)
         Next server
+
+        cgViewModel.UseCurrentBranch = (options.LinkType = LinkType.Branch)
+        cgViewModel.UseCurrentHash = (options.LinkType = LinkType.Hash)
     End Sub
 
 
@@ -59,6 +62,7 @@ Public Class OptionsPage
 
             options.GitHubEnterpriseUrls = FromModel(cgViewModel.GitHubEnterpriseUrls)
             options.BitbucketServerUrls = FromModel(cgViewModel.BitbucketServerUrls)
+            options.LinkType = If(cgViewModel.UseCurrentBranch, LinkType.Branch, LinkType.Hash)
 
             options.Save()
         End If
