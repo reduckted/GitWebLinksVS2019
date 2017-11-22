@@ -2,6 +2,8 @@
 
 Get it from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=reduckted.GitWebLinks).
 
+_Looking for the Visual Studio Code extension? [It's over here!](https://github.com/reduckted/vscode-gitweblinks)_
+
 Copy links to files in their online Git repositories from inside Visual Studio 2017.
 
 Works with:

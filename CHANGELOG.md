@@ -3,6 +3,7 @@
 ## v1.1.0
 
 * Added support for Visual Studio Team Services.
+* Added the ability to generate links using the current branch name of current commit hash.
 
 ## v1.0.2
 
