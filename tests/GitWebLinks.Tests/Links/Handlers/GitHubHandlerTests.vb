@@ -1,4 +1,4 @@
-﻿Imports LibGit2Sharp
+Imports LibGit2Sharp
 Imports System.IO
 
 
@@ -183,7 +183,7 @@ Public Class GitHubHandlerTests
 
                 info = New GitInfo(dir.FullPath, "git@github.com:dotnet/corefx.git")
                 fileName = Path.Combine(dir.FullPath, "src\System.IO.FileSystem\src\System\IO\Directory.cs")
-                handler = CreateHandler()
+                handler = CreateHandler(linkType:=LinkType.Branch)
 
                 Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                     LibGit2Sharp.Commands.Checkout(repo, repo.CreateBranch("feature/thing"))
@@ -191,6 +191,31 @@ Public Class GitHubHandlerTests
 
                 Assert.Equal(
                     "https://github.com/dotnet/corefx/blob/feature/thing/src/System.IO.FileSystem/src/System/IO/Directory.cs",
+                    handler.MakeUrl(info, fileName, Nothing)
+                )
+            End Using
+        End Sub
+
+
+        <Fact()>
+        Public Sub UsesCurrentHash()
+            Using dir As New TempDirectory
+                Dim handler As GitHubHandler
+                Dim info As GitInfo
+                Dim fileName As String
+                Dim sha As String
+
+
+                info = New GitInfo(dir.FullPath, "git@github.com:dotnet/corefx.git")
+                fileName = Path.Combine(dir.FullPath, "src\System.IO.FileSystem\src\System\IO\Directory.cs")
+                handler = CreateHandler(linkType:=LinkType.Hash)
+
+                Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
+                    sha = repo.Head.Tip.Sha
+                End Using
+
+                Assert.Equal(
+                    $"https://github.com/dotnet/corefx/blob/{sha}/src/System.IO.FileSystem/src/System/IO/Directory.cs",
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
@@ -207,7 +232,11 @@ Public Class GitHubHandlerTests
     End Function
 
 
-    Private Shared Function CreateHandler(Optional servers() As ServerUrl = Nothing) As GitHubHandler
+    Private Shared Function CreateHandler(
+            Optional servers() As ServerUrl = Nothing,
+            Optional linkType As LinkType = LinkType.Branch
+        ) As GitHubHandler
+
         Dim options As Mock(Of IOptions)
 
 
@@ -217,6 +246,7 @@ Public Class GitHubHandlerTests
 
         options = New Mock(Of IOptions)
         options.SetupGet(Function(x) x.GitHubEnterpriseUrls).Returns(servers)
+        options.SetupGet(Function(x) x.LinkType).Returns(linkType)
 
         Return New GitHubHandler(options.Object)
     End Function

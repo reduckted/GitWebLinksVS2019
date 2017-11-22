@@ -1,4 +1,4 @@
-﻿Imports LibGit2Sharp
+Imports LibGit2Sharp
 Imports System.ComponentModel.Composition
 
 
@@ -10,12 +10,9 @@ Public Class GitHubHandler
     Private Shared ReadOnly GitHubUrl As New ServerUrl("https://github.com", "git@github.com")
 
 
-    Private ReadOnly cgOptions As IOptions
-
-
     <ImportingConstructor()>
     Public Sub New(options As IOptions)
-        cgOptions = options
+        MyBase.New(options)
     End Sub
 
 
@@ -29,7 +26,7 @@ Public Class GitHubHandler
     Protected Overrides Iterator Function GetServerUrls() As IEnumerable(Of ServerUrl)
         Yield GitHubUrl
 
-        For Each server In cgOptions.GitHubEnterpriseUrls
+        For Each server In Options.GitHubEnterpriseUrls
             Yield server
         Next server
     End Function
@@ -43,11 +40,11 @@ Public Class GitHubHandler
     Protected Overrides Function CreateUrl(
             baseUrl As String,
             repositoryPath As String,
-            branch As String,
+            branchOrHash As String,
             relativePathToFile As String
         ) As String
 
-        Return String.Join("/", {baseUrl, repositoryPath, "blob", branch, relativePathToFile})
+        Return String.Join("/", {baseUrl, repositoryPath, "blob", branchOrHash, relativePathToFile})
     End Function
 
 

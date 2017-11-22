@@ -122,7 +122,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 info = New GitInfo(dir.FullPath, "ssh://foo@vs-ssh.visualstudio.com:22/_ssh/MyRepo")
                 fileName = Path.Combine(dir.FullPath, "src\file.cs")
-                handler = CreateHandler()
+                handler = CreateHandler(linkType:=LinkType.Branch)
 
                 Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                     LibGit2Sharp.Commands.Checkout(repo, repo.CreateBranch("feature/work"))
@@ -130,6 +130,31 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 Assert.Equal(
                     "https://foo.visualstudio.com/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBfeature%2Fwork",
+                    handler.MakeUrl(info, fileName, Nothing)
+                )
+            End Using
+        End Sub
+
+
+        <Fact()>
+        Public Sub UsesCurrentHash()
+            Using dir As New TempDirectory
+                Dim handler As VisualStudioTeamServicesHandler
+                Dim info As GitInfo
+                Dim fileName As String
+                Dim sha As String
+
+
+                info = New GitInfo(dir.FullPath, "ssh://foo@vs-ssh.visualstudio.com:22/_ssh/MyRepo")
+                fileName = Path.Combine(dir.FullPath, "src\file.cs")
+                handler = CreateHandler(linkType:=LinkType.Hash)
+
+                Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
+                    sha = repo.Head.Tip.Sha
+                End Using
+
+                Assert.Equal(
+                    $"https://foo.visualstudio.com/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GC{sha}",
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
@@ -144,8 +169,14 @@ Public Class VisualStudioTeamServicesHandlerTests
     End Function
 
 
-    Private Shared Function CreateHandler() As VisualStudioTeamServicesHandler
-        Return New VisualStudioTeamServicesHandler()
+    Private Shared Function CreateHandler(Optional linkType As LinkType = LinkType.Branch) As VisualStudioTeamServicesHandler
+        Dim options As Mock(Of IOptions)
+
+
+        options = New Mock(Of IOptions)
+        options.SetupGet(Function(x) x.LinkType).Returns(linkType)
+
+        Return New VisualStudioTeamServicesHandler(options.Object)
     End Function
 
 End Class

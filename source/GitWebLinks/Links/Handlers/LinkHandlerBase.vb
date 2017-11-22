@@ -13,6 +13,14 @@ Public MustInherit Class LinkHandlerBase
     Private Shared ReadOnly UsernamePattern As New Regex("(?<scheme>https?://)[^@]+@(?<address>.+)")
 
 
+    Protected Sub New(options As IOptions)
+        Me.Options = options
+    End Sub
+
+
+    Protected ReadOnly Property Options As IOptions
+
+
     Public MustOverride ReadOnly Property Name As String _
         Implements ILinkHandler.Name
 
@@ -36,7 +44,7 @@ Public MustInherit Class LinkHandlerBase
         Dim server As ServerUrl
         Dim repositoryPath As String
         Dim relativePathToFile As String
-        Dim branch As String
+        Dim branchOrHash As String
         Dim baseUrl As String
 
 
@@ -53,11 +61,14 @@ Public MustInherit Class LinkHandlerBase
 
         relativePathToFile = filePath.Substring(gitInfo.RootDirectory.Length).Replace("\", "/").Trim("/"c)
 
-        ' Get the current branch name. The remote branch might not be the same,
-        ' but it's better than using a commit hash which won't match anything on
-        ' the remote if there are commits to this branch on the local repository.
+        ' Get the current branch name or commit SHA
+        ' depending on what type of link we need to create.
         Using repository As New Repository(gitInfo.RootDirectory)
-            branch = GetBranchName(repository.Head)
+            If Options.LinkType = LinkType.Branch Then
+                branchOrHash = GetBranchName(repository.Head)
+            Else
+                branchOrHash = repository.Head.Tip.Sha
+            End If
         End Using
 
         baseUrl = server.BaseUrl
@@ -69,7 +80,7 @@ Public MustInherit Class LinkHandlerBase
         url = CreateUrl(
             baseUrl,
             repositoryPath,
-            Uri.EscapeUriString(branch),
+            Uri.EscapeUriString(branchOrHash),
             Uri.EscapeUriString(relativePathToFile)
         )
 
@@ -185,7 +196,7 @@ Public MustInherit Class LinkHandlerBase
     Protected MustOverride Function CreateUrl(
             baseUrl As String,
             repositoryPath As String,
-            branch As String,
+            branchOrHash As String,
             relativePathToFile As String
         ) As String
 

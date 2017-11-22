@@ -1,4 +1,4 @@
-﻿Imports LibGit2Sharp
+Imports LibGit2Sharp
 Imports System.IO
 
 
@@ -175,7 +175,7 @@ Public Class BitbucketServerHandlerTests
 
                 info = New GitInfo(dir.FullPath, GetGitRemoteUrl())
                 fileName = Path.Combine(dir.FullPath, "lib\server\main.cs")
-                handler = CreateHandler()
+                handler = CreateHandler(linkType:=LinkType.Branch)
 
                 Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                     LibGit2Sharp.Commands.Checkout(repo, repo.CreateBranch("feature/thing"))
@@ -188,6 +188,30 @@ Public Class BitbucketServerHandlerTests
             End Using
         End Sub
 
+
+        <Fact()>
+        Public Sub UsesCurrentHash()
+            Using dir As New TempDirectory
+                Dim handler As BitbucketServerHandler
+                Dim info As GitInfo
+                Dim fileName As String
+                Dim sha As String
+
+
+                info = New GitInfo(dir.FullPath, GetGitRemoteUrl())
+                fileName = Path.Combine(dir.FullPath, "lib\server\main.cs")
+                handler = CreateHandler(linkType:=LinkType.Hash)
+
+                Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
+                    sha = repo.Head.Tip.Sha
+                End Using
+
+                Assert.Equal(
+                    $"https://local-bitbucket:7990/context/projects/bb/repos/my-code/browse/lib/server/main.cs?at={sha}",
+                    handler.MakeUrl(info, fileName, Nothing)
+                )
+            End Using
+        End Sub
     End Class
 
 
@@ -209,7 +233,11 @@ Public Class BitbucketServerHandlerTests
     End Function
 
 
-    Private Shared Function CreateHandler(Optional servers() As ServerUrl = Nothing) As BitbucketServerHandler
+    Private Shared Function CreateHandler(
+            Optional servers() As ServerUrl = Nothing,
+            Optional linkType As LinkType = LinkType.Branch
+        ) As BitbucketServerHandler
+
         Dim options As Mock(Of IOptions)
 
 
@@ -219,6 +247,7 @@ Public Class BitbucketServerHandlerTests
 
         options = New Mock(Of IOptions)
         options.SetupGet(Function(x) x.BitbucketServerUrls).Returns(servers)
+        options.SetupGet(Function(x) x.LinkType).Returns(linkType)
 
         Return New BitbucketServerHandler(options.Object)
     End Function

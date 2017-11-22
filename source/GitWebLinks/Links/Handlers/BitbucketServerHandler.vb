@@ -1,4 +1,4 @@
-﻿Imports LibGit2Sharp
+Imports LibGit2Sharp
 Imports System.ComponentModel.Composition
 Imports System.Text.RegularExpressions
 
@@ -10,12 +10,9 @@ Public Class BitbucketServerHandler
     Private Shared ReadOnly ProjectPattern As New Regex("(?<project>[^\/]+)\/(?<repo>[^\/]+)$")
 
 
-    Private ReadOnly cgOptions As IOptions
-
-
     <ImportingConstructor()>
     Public Sub New(options As IOptions)
-        cgOptions = options
+        MyBase.New(options)
     End Sub
 
 
@@ -27,7 +24,7 @@ Public Class BitbucketServerHandler
 
 
     Protected Overrides Function GetServerUrls() As IEnumerable(Of ServerUrl)
-        Return cgOptions.BitbucketServerUrls
+        Return Options.BitbucketServerUrls
     End Function
 
 
@@ -39,7 +36,7 @@ Public Class BitbucketServerHandler
     Protected Overrides Function CreateUrl(
             baseUrl As String,
             repositoryPath As String,
-            branch As String,
+            branchOrHash As String,
             relativePathToFile As String
         ) As String
 
@@ -61,7 +58,7 @@ Public Class BitbucketServerHandler
         url = String.Join("/", {baseUrl, "projects", project, "repos", repo, "browse", relativePathToFile})
 
         ' The branch name is specified via a query parameter.
-        url &= $"?at={Uri.EscapeDataString(branch)}"
+        url &= $"?at={Uri.EscapeDataString(branchOrHash)}"
 
         Return url
     End Function

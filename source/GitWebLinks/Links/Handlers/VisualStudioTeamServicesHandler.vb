@@ -12,6 +12,12 @@ Public Class VisualStudioTeamServicesHandler
     Private Shared ReadOnly SshPattern As New Regex("^(?<username>[^.]+)@vs-ssh\.visualstudio\.com:22/_ssh/(?<repo>.+)$")
 
 
+    <ImportingConstructor()>
+    Public Sub New(options As IOptions)
+        MyBase.New(options)
+    End Sub
+
+
     Public Overrides ReadOnly Property Name As String
         Get
             Return "Visual Studio Team Services"
@@ -53,18 +59,25 @@ Public Class VisualStudioTeamServicesHandler
     Protected Overrides Function CreateUrl(
             baseUrl As String,
             repositoryPath As String,
-            branch As String,
+            branchOrHash As String,
             relativePathToFile As String
         ) As String
 
         Dim root As String
         Dim path As String
         Dim version As String
+        Dim branchOrHashPrefix As String
 
+
+        If Options.LinkType = LinkType.Branch Then
+            branchOrHashPrefix = "GB"
+        Else
+            branchOrHashPrefix = "GC"
+        End If
 
         root = String.Join("/", {baseUrl, repositoryPath})
         path = Uri.EscapeDataString(relativePathToFile)
-        version = Uri.EscapeDataString($"GB{branch}")
+        version = Uri.EscapeDataString($"{branchOrHashPrefix}{branchOrHash}")
 
         Return $"{root}?path=%2F{path}&version={version}"
     End Function

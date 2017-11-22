@@ -1,4 +1,4 @@
-﻿Imports LibGit2Sharp
+Imports LibGit2Sharp
 Imports System.IO
 
 Public Class BitbucketCloudHandlerTests
@@ -122,7 +122,7 @@ Public Class BitbucketCloudHandlerTests
 
                 info = New GitInfo(dir.FullPath, "git@bitbucket.org:atlassian/atlassian-bamboo_rest.git")
                 fileName = Path.Combine(dir.FullPath, "lib\puppet\feature\restclient.rb")
-                handler = CreateHandler()
+                handler = CreateHandler(linkType:=LinkType.Branch)
 
                 Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                     LibGit2Sharp.Commands.Checkout(repo, repo.CreateBranch("feature/thing"))
@@ -130,6 +130,31 @@ Public Class BitbucketCloudHandlerTests
 
                 Assert.Equal(
                     "https://bitbucket.org/atlassian/atlassian-bamboo_rest/src/feature/thing/lib/puppet/feature/restclient.rb",
+                    handler.MakeUrl(info, fileName, Nothing)
+                )
+            End Using
+        End Sub
+
+
+        <Fact()>
+        Public Sub UsesCurrentHash()
+            Using dir As New TempDirectory
+                Dim handler As BitbucketCloudHandler
+                Dim info As GitInfo
+                Dim fileName As String
+                Dim sha As String
+
+
+                info = New GitInfo(dir.FullPath, "git@bitbucket.org:atlassian/atlassian-bamboo_rest.git")
+                fileName = Path.Combine(dir.FullPath, "lib\puppet\feature\restclient.rb")
+                handler = CreateHandler(linkType:=LinkType.Hash)
+
+                Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
+                    sha = repo.Head.Tip.Sha
+                End Using
+
+                Assert.Equal(
+                    $"https://bitbucket.org/atlassian/atlassian-bamboo_rest/src/{sha}/lib/puppet/feature/restclient.rb",
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
@@ -146,8 +171,14 @@ Public Class BitbucketCloudHandlerTests
     End Function
 
 
-    Private Shared Function CreateHandler() As BitbucketCloudHandler
-        Return New BitbucketCloudHandler()
+    Private Shared Function CreateHandler(Optional linkType As LinkType = LinkType.Branch) As BitbucketCloudHandler
+        Dim options As Mock(Of IOptions)
+
+
+        options = New Mock(Of IOptions)
+        options.SetupGet(Function(x) x.LinkType).Returns(linkType)
+
+        Return New BitbucketCloudHandler(options.Object)
     End Function
 
 End Class
