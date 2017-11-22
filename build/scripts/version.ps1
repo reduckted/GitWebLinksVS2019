@@ -53,14 +53,22 @@ Get-ChildItem -Path $root -Recurse -Filter "*.vsixmanifest" | ForEach-Object {
         $identity = $doc.SelectSingleNode("x:PackageManifest/x:Metadata/x:Identity", $ns)
         $identity.SetAttribute("Version", $vsixVersion)
 
-        $writer = [System.IO.StreamWriter]::new($_.FullName, $false, [System.Text.Encoding]::UTF8)
+        $settings = New-Object System.Xml.XmlWriterSettings
+        $settings.Indent = $true
+        $settings.IndentChars = "    "
+        $settings.NewLineChars = "`r`n"
+        $settings.NewLineHandling = "Replace"
 
+        $streamWriter = [System.IO.StreamWriter]::new($_.FullName, $false, [System.Text.Encoding]::UTF8)
+        $xmlWriter = [System.Xml.XmlWriter]::Create($streamWriter, $settings)
+        
         try {
-            $doc.Save($writer)
-            $writer.WriteLine("")
-
+            $doc.Save($xmlWriter)
+            $streamWriter.WriteLine("")
+            
         } finally {
-            $writer.Close()
+            $xmlWriter.Close()
+            $streamWriter.Close()
         }
     }
 }
