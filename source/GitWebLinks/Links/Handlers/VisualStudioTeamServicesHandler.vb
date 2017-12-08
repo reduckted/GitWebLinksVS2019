@@ -77,7 +77,7 @@ Public Class VisualStudioTeamServicesHandler
 
         root = String.Join("/", {baseUrl, repositoryPath})
         path = Uri.EscapeDataString(relativePathToFile)
-        version = Uri.EscapeDataString($"{branchOrHashPrefix}{branchOrHash}")
+        version = $"{branchOrHashPrefix}{Uri.EscapeDataString(branchOrHash)}"
 
         Return $"{root}?path=%2F{path}&version={version}"
     End Function

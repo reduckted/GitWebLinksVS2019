@@ -120,6 +120,29 @@ Public Class BitbucketServerHandlerTests
 
 
         <Fact()>
+        Public Sub CreatesCorrectLinkWhenPathContainsSpace()
+            Using dir As New TempDirectory
+                Dim handler As BitbucketServerHandler
+                Dim info As GitInfo
+                Dim fileName As String
+
+
+                info = New GitInfo(dir.FullPath, GetGitRemoteUrl())
+                fileName = Path.Combine(dir.FullPath, "lib\sub dir\main.cs")
+                handler = CreateHandler()
+
+                Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
+                End Using
+
+                Assert.Equal(
+                    "https://local-bitbucket:7990/context/projects/bb/repos/my-code/browse/lib/sub%20dir/main.cs?at=refs%2Fheads%2Fmaster",
+                    handler.MakeUrl(info, fileName, Nothing)
+                )
+            End Using
+        End Sub
+
+
+        <Fact()>
         Public Sub CreatesCorrectLinkWithSingleLineSelection()
             Using dir As New TempDirectory
                 Dim handler As BitbucketServerHandler

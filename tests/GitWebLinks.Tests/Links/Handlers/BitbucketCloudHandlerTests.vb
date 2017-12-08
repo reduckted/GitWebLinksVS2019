@@ -67,6 +67,29 @@ Public Class BitbucketCloudHandlerTests
 
 
         <Fact()>
+        Public Sub CreatesCorrectLinkWhenPathContainsSpace()
+            Using dir As New TempDirectory
+                Dim handler As BitbucketCloudHandler
+                Dim info As GitInfo
+                Dim fileName As String
+
+
+                info = New GitInfo(dir.FullPath, "git@bitbucket.org:atlassian/atlassian-bamboo_rest.git")
+                fileName = Path.Combine(dir.FullPath, "lib\sub dir\restclient.rb")
+                handler = CreateHandler()
+
+                Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
+                End Using
+
+                Assert.Equal(
+                    "https://bitbucket.org/atlassian/atlassian-bamboo_rest/src/master/lib/sub%20dir/restclient.rb",
+                    handler.MakeUrl(info, fileName, Nothing)
+                )
+            End Using
+        End Sub
+
+
+        <Fact()>
         Public Sub CreatesCorrectLinkWithSingleLineSelection()
             Using dir As New TempDirectory
                 Dim handler As BitbucketCloudHandler

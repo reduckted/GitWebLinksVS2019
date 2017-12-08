@@ -80,8 +80,8 @@ Public MustInherit Class LinkHandlerBase
         url = CreateUrl(
             baseUrl,
             repositoryPath,
-            Uri.EscapeUriString(branchOrHash),
-            Uri.EscapeUriString(relativePathToFile)
+            branchOrHash,
+            relativePathToFile
         )
 
         If selection IsNot Nothing Then

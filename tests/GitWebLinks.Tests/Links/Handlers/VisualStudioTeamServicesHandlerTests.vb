@@ -67,6 +67,29 @@ Public Class VisualStudioTeamServicesHandlerTests
 
 
         <Fact()>
+        Public Sub CreatesCorrectLinkWhenPathContainsSpace()
+            Using dir As New TempDirectory
+                Dim handler As VisualStudioTeamServicesHandler
+                Dim info As GitInfo
+                Dim fileName As String
+
+
+                info = New GitInfo(dir.FullPath, "ssh://foo@vs-ssh.visualstudio.com:22/_ssh/MyRepo")
+                fileName = Path.Combine(dir.FullPath, "src\sub dir\file.cs")
+                handler = CreateHandler()
+
+                Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
+                End Using
+
+                Assert.Equal(
+                    "https://foo.visualstudio.com/_git/MyRepo?path=%2Fsrc%2Fsub%20dir%2Ffile.cs&version=GBmaster&line=2",
+                    handler.MakeUrl(info, fileName, New LineSelection(2, 2))
+                )
+            End Using
+        End Sub
+
+
+        <Fact()>
         Public Sub CreatesCorrectLinkWithSingleLineSelection()
             Using dir As New TempDirectory
                 Dim handler As VisualStudioTeamServicesHandler

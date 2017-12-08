@@ -42,7 +42,13 @@ Public Class BitbucketCloudHandler
             relativePathToFile As String
         ) As String
 
-        Return String.Join("/", {baseUrl, repositoryPath, "src", branchOrHash, relativePathToFile})
+        Return String.Join("/", {
+            baseUrl,
+            repositoryPath,
+            "src",
+            Uri.EscapeUriString(branchOrHash),
+            Uri.EscapeUriString(relativePathToFile)
+        })
     End Function
 
 

@@ -128,6 +128,29 @@ Public Class GitHubHandlerTests
 
 
         <Fact()>
+        Public Sub CreatesCorrectLinkWhenPathContainsSpace()
+            Using dir As New TempDirectory
+                Dim handler As GitHubHandler
+                Dim info As GitInfo
+                Dim fileName As String
+
+
+                info = New GitInfo(dir.FullPath, "git@github.com:dotnet/corefx.git")
+                fileName = Path.Combine(dir.FullPath, "src\sub dir\Directory.cs")
+                handler = CreateHandler()
+
+                Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
+                End Using
+
+                Assert.Equal(
+                    "https://github.com/dotnet/corefx/blob/master/src/sub%20dir/Directory.cs",
+                    handler.MakeUrl(info, fileName, Nothing)
+                )
+            End Using
+        End Sub
+
+
+        <Fact()>
         Public Sub CreatesCorrectLinkWithSingleLineSelection()
             Using dir As New TempDirectory
                 Dim handler As GitHubHandler

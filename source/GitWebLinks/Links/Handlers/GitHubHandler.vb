@@ -44,7 +44,13 @@ Public Class GitHubHandler
             relativePathToFile As String
         ) As String
 
-        Return String.Join("/", {baseUrl, repositoryPath, "blob", branchOrHash, relativePathToFile})
+        Return String.Join("/", {
+            baseUrl,
+            repositoryPath,
+            "blob",
+            Uri.EscapeUriString(branchOrHash),
+            Uri.EscapeUriString(relativePathToFile)
+        })
     End Function
 
 

@@ -55,7 +55,15 @@ Public Class BitbucketServerHandler
         project = projectMatch.Groups("project").Value
         repo = projectMatch.Groups("repo").Value
 
-        url = String.Join("/", {baseUrl, "projects", project, "repos", repo, "browse", relativePathToFile})
+        url = String.Join("/", {
+            baseUrl,
+            "projects",
+            project,
+            "repos",
+            repo,
+            "browse",
+            Uri.EscapeUriString(relativePathToFile)}
+        )
 
         ' The branch name is specified via a query parameter.
         url &= $"?at={Uri.EscapeDataString(branchOrHash)}"
