@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.2
+
+* Added support for Visual Studio Team Services repositories in collections.
+
 ## v1.1.1
 
 * Fixed a bug that would create the wrong URL when there was a space in the file path.

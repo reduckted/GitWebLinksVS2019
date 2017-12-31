@@ -43,8 +43,8 @@ Public Class VisualStudioTeamServicesHandlerTests
     Public Class MakeUrlMethod
 
         <Theory()>
-        <MemberData(NameOf(GetRemotes), MemberType:=GetType(VisualStudioTeamServicesHandlerTests))>
-        Public Sub CreatesCorrectLinkFromRemoteUrl(remote As String)
+        <MemberData(NameOf(GetNonCollectionRemotes), MemberType:=GetType(VisualStudioTeamServicesHandlerTests))>
+        Public Sub CreatesCorrectLinkFromRemoteUrlWithoutCollection(remote As String)
             Using dir As New TempDirectory
                 Dim handler As VisualStudioTeamServicesHandler
                 Dim info As GitInfo
@@ -60,6 +60,30 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 Assert.Equal(
                     "https://foo.visualstudio.com/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster",
+                    handler.MakeUrl(info, fileName, Nothing)
+                )
+            End Using
+        End Sub
+
+
+        <Theory()>
+        <MemberData(NameOf(GetCollectionRemotes), MemberType:=GetType(VisualStudioTeamServicesHandlerTests))>
+        Public Sub CreatesCorrectLinkFromRemoteUrlWithCollection(remote As String)
+            Using dir As New TempDirectory
+                Dim handler As VisualStudioTeamServicesHandler
+                Dim info As GitInfo
+                Dim fileName As String
+
+
+                info = New GitInfo(dir.FullPath, remote)
+                fileName = Path.Combine(dir.FullPath, "src\file.cs")
+                handler = CreateHandler()
+
+                Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
+                End Using
+
+                Assert.Equal(
+                    "https://foo.visualstudio.com/DefaultCollection/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster",
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
@@ -186,9 +210,20 @@ Public Class VisualStudioTeamServicesHandlerTests
     End Class
 
 
-    Public Shared Iterator Function GetRemotes() As IEnumerable(Of Object())
+    Public Shared Function GetRemotes() As IEnumerable(Of Object())
+        Return GetNonCollectionRemotes().Concat(GetCollectionRemotes())
+    End Function
+
+
+    Public Shared Iterator Function GetNonCollectionRemotes() As IEnumerable(Of Object())
         Yield {"https://foo.visualstudio.com/_git/MyRepo"}
         Yield {"ssh://foo@vs-ssh.visualstudio.com:22/_ssh/MyRepo"}
+    End Function
+
+
+    Public Shared Iterator Function GetCollectionRemotes() As IEnumerable(Of Object())
+        Yield {"https://foo.visualstudio.com/DefaultCollection/_git/MyRepo"}
+        Yield {"ssh://foo@vs-ssh.visualstudio.com:22/DefaultCollection/_ssh/MyRepo"}
     End Function
 
 

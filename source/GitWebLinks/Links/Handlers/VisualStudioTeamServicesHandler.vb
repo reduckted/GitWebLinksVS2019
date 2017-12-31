@@ -8,8 +8,8 @@ Public Class VisualStudioTeamServicesHandler
     Inherits LinkHandlerBase
 
 
-    Private Shared ReadOnly HttpsPattern As New Regex("^https:\/\/(?<username>[^.]+)\.visualstudio\.com\/_git\/.+$")
-    Private Shared ReadOnly SshPattern As New Regex("^(?<username>[^.]+)@vs-ssh\.visualstudio\.com:22/_ssh/.+$")
+    Private Shared ReadOnly HttpsPattern As New Regex("^https:\/\/(?<username>[^.]+)\.visualstudio\.com(?:\/(?<collection>[^\/]+))?\/_git\/.+$")
+    Private Shared ReadOnly SshPattern As New Regex("^(?<username>[^.]+)@vs-ssh\.visualstudio\.com:22(?:\/(?<collection>[^\/]+))?/_ssh/.+$")
 
 
     <ImportingConstructor()>
@@ -37,13 +37,20 @@ Public Class VisualStudioTeamServicesHandler
 
         If match.Success Then
             Dim username As String
+            Dim collection As String
 
 
             username = match.Groups("username").Value
 
+            If match.Groups("collection").Success Then
+                collection = $"/{match.Groups("collection").Value}"
+            Else
+                collection = String.Empty
+            End If
+
             Return New ServerUrl(
-                $"https://{username}.visualstudio.com/_git",
-                $"{username}@vs-ssh.visualstudio.com:22/_ssh"
+                $"https://{username}.visualstudio.com{collection}/_git",
+                $"{username}@vs-ssh.visualstudio.com:22{collection}/_ssh"
             )
         End If
 
