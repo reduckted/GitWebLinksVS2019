@@ -26,7 +26,7 @@ if ($LASTEXITCODE -ne 0) {
     throw "Build failed."
 }
 
-$xunit = Join-Path -Path $root -ChildPath "packages\xunit.runner.console.2.3.1\tools\net452\xunit.console.exe"
+$xunit = Join-Path -Path $root -ChildPath "packages\xunit.runner.console.2.4.1\tools\net452\xunit.console.exe"
 $assembly = Join-Path -Path $root -ChildPath "tests\GitWebLinks.Tests\bin\Release\GitWebLinks.Tests.dll"
 
 & $xunit $assembly
