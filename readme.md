@@ -45,7 +45,7 @@ If you use GitHub Enterprise or Bitbucket Server, you will need to tell this ext
 
 ![Options](media/options.png)
 
-You will need to specify the base URL of the server. If you use SSH remote URLs, then you will also need to specify the SSH URL.
+You will need to specify the **base URL** of the server (_not_ the URL of your Git repository). If you use SSH remote URLs, then you will also need to specify the SSH URL.
 
 
 ## Troubleshooting
