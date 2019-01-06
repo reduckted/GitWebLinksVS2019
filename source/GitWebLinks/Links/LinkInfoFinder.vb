@@ -1,24 +1,21 @@
-﻿Imports System.ComponentModel.Composition
+Imports System.Threading.Tasks
 
 
-<Export(GetType(ILinkInfoFinder))>
 Public Class LinkInfoFinder
+    Implements IAsyncInitializable
     Implements ILinkInfoFinder
 
 
-    Private ReadOnly cgGitInfoFinder As IGitInfoFinder
-    Private ReadOnly cgLinkHandlers As List(Of ILinkHandler)
+    Private cgGitInfoFinder As IGitInfoFinder
+    Private cgLinkHandlers As IReadOnlyCollection(Of ILinkHandler)
 
 
-    <ImportingConstructor()>
-    Public Sub New(
-            gitInfoFinder As IGitInfoFinder,
-            <ImportMany()> linkHandlers As IEnumerable(Of ILinkHandler)
-        )
+    Public Async Function InitializeAsync(provider As IAsyncServiceProvider) As Task _
+        Implements IAsyncInitializable.InitializeAsync
 
-        cgGitInfoFinder = gitInfoFinder
-        cgLinkHandlers = linkHandlers.ToList()
-    End Sub
+        cgGitInfoFinder = Await provider.GetServiceAsync(Of IGitInfoFinder)
+        cgLinkHandlers = (Await provider.GetServiceAsync(Of ILinkHandlerSource)).GetHandlers()
+    End Function
 
 
     Public Function Find(solutionDirectory As String) As LinkInfo _

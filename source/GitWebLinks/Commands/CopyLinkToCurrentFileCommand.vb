@@ -1,29 +1,10 @@
-﻿Imports EnvDTE
+Imports EnvDTE
 Imports Microsoft.VisualStudio.Shell
-Imports System.ComponentModel.Composition
 Imports System.ComponentModel.Design
 
 
-<Export(GetType(CommandBase))>
 Public Class CopyLinkToCurrentFileCommand
     Inherits CommandBase
-
-
-    Private ReadOnly cgLinkInfoProvider As ILinkInfoProvider
-    Private ReadOnly cgClipboard As IClipboard
-
-
-    <ImportingConstructor()>
-    Public Sub New(
-            dteProvider As IDteProvider,
-            linkInfoProvider As ILinkInfoProvider,
-            clipboard As IClipboard
-        )
-
-        MyBase.New(dteProvider)
-        cgLinkInfoProvider = linkInfoProvider
-        cgClipboard = clipboard
-    End Sub
 
 
     Protected Overrides Iterator Function GetCommandIDs() As IEnumerable(Of CommandID)
@@ -33,9 +14,9 @@ Public Class CopyLinkToCurrentFileCommand
 
 
     Protected Overrides Sub BeforeQueryStatus(command As OleMenuCommand)
-        If (cgLinkInfoProvider.LinkInfo IsNot Nothing) AndAlso (Dte.ActiveDocument IsNot Nothing) Then
+        If (LinkInfo IsNot Nothing) AndAlso (Dte.ActiveDocument IsNot Nothing) Then
             command.Visible = True
-            command.Text = $"Copy Link to {cgLinkInfoProvider.LinkInfo.Handler.Name}"
+            command.Text = $"Copy Link to {LinkInfo.Handler.Name}"
 
         Else
             command.Visible = False
@@ -44,7 +25,7 @@ Public Class CopyLinkToCurrentFileCommand
 
 
     Protected Overrides Sub Invoke(id As CommandID)
-        If (cgLinkInfoProvider.LinkInfo IsNot Nothing) AndAlso (Dte.ActiveDocument IsNot Nothing) Then
+        If (LinkInfo IsNot Nothing) AndAlso (Dte.ActiveDocument IsNot Nothing) Then
             Dim filePath As String
 
 
@@ -68,13 +49,9 @@ Public Class CopyLinkToCurrentFileCommand
                     lineSelection = Nothing
                 End If
 
-                url = cgLinkInfoProvider.LinkInfo.Handler.MakeUrl(
-                    cgLinkInfoProvider.LinkInfo.GitInfo,
-                    filePath,
-                    lineSelection
-                )
+                url = LinkInfo.Handler.MakeUrl(LinkInfo.GitInfo, filePath, lineSelection)
 
-                cgClipboard.SetText(url)
+                SetClipboardText(url)
             End If
         End If
     End Sub

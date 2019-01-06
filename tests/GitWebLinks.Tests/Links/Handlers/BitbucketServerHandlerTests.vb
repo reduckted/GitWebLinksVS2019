@@ -7,9 +7,9 @@ Public Class BitbucketServerHandlerTests
     Public Class NameProperty
 
         <Fact()>
-        Public Sub ReturnsBitbucket()
-            Assert.Equal("Bitbucket", CreateHandler().Name)
-        End Sub
+        Public Async Function ReturnsBitbucket() As Threading.Tasks.Task
+            Assert.Equal("Bitbucket", (Await CreateHandlerAsync()).Name)
+        End Function
 
     End Class
 
@@ -18,25 +18,25 @@ Public Class BitbucketServerHandlerTests
 
         <Theory()>
         <MemberData(NameOf(GetRemotes), MemberType:=GetType(BitbucketServerHandlerTests))>
-        Public Sub MatchesServerUrlsFromSettings(remote As String)
+        Public Async Function MatchesServerUrlsFromSettings(remote As String) As Threading.Tasks.Task
             Dim handler As BitbucketServerHandler
 
 
-            handler = CreateHandler({New ServerUrl("https://local-bitbucket:7990/context", "git@local-bitbucket:7999")})
+            handler = Await CreateHandlerAsync({New ServerUrl("https://local-bitbucket:7990/context", "git@local-bitbucket:7999")})
 
             Assert.True(handler.IsMatch(remote))
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub DoesNotMatchServerUrlsNotInSettings()
+        Public Async Function DoesNotMatchServerUrlsNotInSettings() As Threading.Tasks.Task
             Dim handler As BitbucketServerHandler
 
 
-            handler = CreateHandler()
+            handler = Await CreateHandlerAsync()
 
             Assert.False(handler.IsMatch("https://codeplex.com/foo/bar.git"))
-        End Sub
+        End Function
 
     End Class
 
@@ -45,7 +45,7 @@ Public Class BitbucketServerHandlerTests
 
         <Theory()>
         <MemberData(NameOf(GetRemotes), MemberType:=GetType(BitbucketServerHandlerTests))>
-        Public Sub CreatesCorrectLinkFromRemoteUrl(remote As String)
+        Public Async Function CreatesCorrectLinkFromRemoteUrl(remote As String) As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As BitbucketServerHandler
                 Dim info As GitInfo
@@ -54,7 +54,7 @@ Public Class BitbucketServerHandlerTests
 
                 info = New GitInfo(dir.FullPath, remote)
                 fileName = Path.Combine(dir.FullPath, "lib\server\main.cs")
-                handler = CreateHandler()
+                handler = Await CreateHandlerAsync()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -64,12 +64,12 @@ Public Class BitbucketServerHandlerTests
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Theory()>
         <MemberData(NameOf(GetRemotes), MemberType:=GetType(BitbucketServerHandlerTests))>
-        Public Sub CreatesCorrectLinkFromHttpRemote(remote As String)
+        Public Async Function CreatesCorrectLinkFromHttpRemote(remote As String) As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As BitbucketServerHandler
                 Dim info As GitInfo
@@ -83,7 +83,7 @@ Public Class BitbucketServerHandlerTests
 
                 info = New GitInfo(dir.FullPath, remote)
                 fileName = Path.Combine(dir.FullPath, "lib\server\main.cs")
-                handler = CreateHandler({New ServerUrl("http://local-bitbucket:7990/context", "git@local-bitbucket:7999")})
+                handler = Await CreateHandlerAsync({New ServerUrl("http://local-bitbucket:7990/context", "git@local-bitbucket:7999")})
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -93,11 +93,11 @@ Public Class BitbucketServerHandlerTests
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub CreatesCorrectLinkWhenServerUrlEndsWithSlash()
+        Public Async Function CreatesCorrectLinkWhenServerUrlEndsWithSlash() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As BitbucketServerHandler
                 Dim info As GitInfo
@@ -106,7 +106,7 @@ Public Class BitbucketServerHandlerTests
 
                 info = New GitInfo(dir.FullPath, GetHttpsRemoteUrl())
                 fileName = Path.Combine(dir.FullPath, "lib\server\main.cs")
-                handler = CreateHandler({New ServerUrl("https://local-bitbucket:7990/context/", "git@local-bitbucket:7999")})
+                handler = Await CreateHandlerAsync({New ServerUrl("https://local-bitbucket:7990/context/", "git@local-bitbucket:7999")})
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -116,11 +116,11 @@ Public Class BitbucketServerHandlerTests
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub CreatesCorrectLinkWhenPathContainsSpace()
+        Public Async Function CreatesCorrectLinkWhenPathContainsSpace() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As BitbucketServerHandler
                 Dim info As GitInfo
@@ -129,7 +129,7 @@ Public Class BitbucketServerHandlerTests
 
                 info = New GitInfo(dir.FullPath, GetGitRemoteUrl())
                 fileName = Path.Combine(dir.FullPath, "lib\sub dir\main.cs")
-                handler = CreateHandler()
+                handler = Await CreateHandlerAsync()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -139,11 +139,11 @@ Public Class BitbucketServerHandlerTests
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub CreatesCorrectLinkWithSingleLineSelection()
+        Public Async Function CreatesCorrectLinkWithSingleLineSelection() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As BitbucketServerHandler
                 Dim info As GitInfo
@@ -152,7 +152,7 @@ Public Class BitbucketServerHandlerTests
 
                 info = New GitInfo(dir.FullPath, GetGitRemoteUrl())
                 fileName = Path.Combine(dir.FullPath, "lib\server\main.cs")
-                handler = CreateHandler()
+                handler = Await CreateHandlerAsync()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -162,11 +162,11 @@ Public Class BitbucketServerHandlerTests
                     handler.MakeUrl(info, fileName, New LineSelection(2, 2))
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub CreatesCorrectLinkWithMultiLineSelection()
+        Public Async Function CreatesCorrectLinkWithMultiLineSelection() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As BitbucketServerHandler
                 Dim info As GitInfo
@@ -175,7 +175,7 @@ Public Class BitbucketServerHandlerTests
 
                 info = New GitInfo(dir.FullPath, GetGitRemoteUrl())
                 fileName = Path.Combine(dir.FullPath, "lib\server\main.cs")
-                handler = CreateHandler()
+                handler = Await CreateHandlerAsync()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -185,11 +185,11 @@ Public Class BitbucketServerHandlerTests
                     handler.MakeUrl(info, fileName, New LineSelection(10, 23))
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub UsesCurrentBranch()
+        Public Async Function UsesCurrentBranch() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As BitbucketServerHandler
                 Dim info As GitInfo
@@ -198,7 +198,7 @@ Public Class BitbucketServerHandlerTests
 
                 info = New GitInfo(dir.FullPath, GetGitRemoteUrl())
                 fileName = Path.Combine(dir.FullPath, "lib\server\main.cs")
-                handler = CreateHandler(linkType:=LinkType.Branch)
+                handler = Await CreateHandlerAsync(linkType:=LinkType.Branch)
 
                 Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                     LibGit2Sharp.Commands.Checkout(repo, repo.CreateBranch("feature/thing"))
@@ -209,11 +209,11 @@ Public Class BitbucketServerHandlerTests
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub UsesCurrentHash()
+        Public Async Function UsesCurrentHash() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As BitbucketServerHandler
                 Dim info As GitInfo
@@ -223,7 +223,7 @@ Public Class BitbucketServerHandlerTests
 
                 info = New GitInfo(dir.FullPath, GetGitRemoteUrl())
                 fileName = Path.Combine(dir.FullPath, "lib\server\main.cs")
-                handler = CreateHandler(linkType:=LinkType.Hash)
+                handler = Await CreateHandlerAsync(linkType:=LinkType.Hash)
 
                 Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                     sha = repo.Head.Tip.Sha
@@ -234,7 +234,7 @@ Public Class BitbucketServerHandlerTests
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
-        End Sub
+        End Function
     End Class
 
 
@@ -256,12 +256,14 @@ Public Class BitbucketServerHandlerTests
     End Function
 
 
-    Private Shared Function CreateHandler(
+    Private Shared Async Function CreateHandlerAsync(
             Optional servers() As ServerUrl = Nothing,
             Optional linkType As LinkType = LinkType.Branch
-        ) As BitbucketServerHandler
+        ) As Threading.Tasks.Task(Of BitbucketServerHandler)
 
         Dim options As Mock(Of IOptions)
+        Dim provider As TestAsyncServiceProvider
+        Dim handler As BitbucketServerHandler
 
 
         If servers Is Nothing Then
@@ -272,7 +274,13 @@ Public Class BitbucketServerHandlerTests
         options.SetupGet(Function(x) x.BitbucketServerUrls).Returns(servers)
         options.SetupGet(Function(x) x.LinkType).Returns(linkType)
 
-        Return New BitbucketServerHandler(options.Object)
+        provider = New TestAsyncServiceProvider
+        provider.AddService(options.Object)
+
+        handler = New BitbucketServerHandler()
+        Await handler.InitializeAsync(provider)
+
+        Return handler
     End Function
 
 End Class

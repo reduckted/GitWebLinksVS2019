@@ -1,23 +1,34 @@
-﻿Imports EnvDTE80
+Imports EnvDTE
+Imports EnvDTE80
 Imports Microsoft.VisualStudio.Shell
 Imports System.ComponentModel.Design
 
 
 Public MustInherit Class CommandBase
-
-    Protected Sub New(dteProvider As IDteProvider)
-        Dte = DirectCast(dteProvider.Dte, DTE2)
-    End Sub
+    Implements IAsyncInitializable
 
 
-    Protected ReadOnly Property Dte As DTE2
+    Private cgClipboard As IClipboard
+    Private cgLinkInfoProvider As ILinkInfoProvider
+    Private cgDte As DTE2
 
 
-    Public Sub Initialize(commandService As IMenuCommandService)
+    Public Async Function InitializeAsync(provider As IAsyncServiceProvider) As Threading.Tasks.Task _
+        Implements IAsyncInitializable.InitializeAsync
+
+        Dim commandService As IMenuCommandService
+
+
+        cgClipboard = Await provider.GetServiceAsync(Of IClipboard)
+        cgLinkInfoProvider = Await provider.GetServiceAsync(Of ILinkInfoProvider)
+        cgDte = DirectCast(Await provider.GetServiceAsync(Of DTE), DTE2)
+
+        commandService = Await provider.GetServiceAsync(Of IMenuCommandService)
+
         For Each id In GetCommandIDs()
             AddCommand(commandService, id)
         Next id
-    End Sub
+    End Function
 
 
     Private Sub AddCommand(
@@ -42,5 +53,24 @@ Public MustInherit Class CommandBase
 
 
     Protected MustOverride Sub Invoke(commandID As CommandID)
+
+
+    Protected ReadOnly Property Dte As DTE2
+        Get
+            Return cgDte
+        End Get
+    End Property
+
+
+    Protected ReadOnly Property LinkInfo As LinkInfo
+        Get
+            Return cgLinkInfoProvider.LinkInfo
+        End Get
+    End Property
+
+
+    Protected Sub SetClipboardText(text As String)
+        cgClipboard.SetText(text)
+    End Sub
 
 End Class

@@ -1,11 +1,12 @@
-﻿Imports EnvDTE
+Imports EnvDTE
 
 
 Public Class LinkInfoProviderTests
 
     <Fact()>
-    Public Sub FindsLinkInfoWhenSolutionIsOpened()
-        Dim provider As LinkInfoProvider
+    Public Async Function FindsLinkInfoWhenSolutionIsOpened() As Threading.Tasks.Task
+        Dim infoProvider As LinkInfoProvider
+        Dim serviceProvider As TestAsyncServiceProvider
         Dim dte As DTE
         Dim finder As Mock(Of ILinkInfoFinder)
         Dim solutionEvents As MockSolutionEvents
@@ -19,21 +20,27 @@ Public Class LinkInfoProviderTests
 
         dte = MockDte(False, "Z:\foo\bar\meep.sln", solutionEvents)
 
-        provider = New LinkInfoProvider(MockDteProvider(dte), finder.Object)
+        serviceProvider = New TestAsyncServiceProvider
+        serviceProvider.AddService(dte)
+        serviceProvider.AddService(finder.Object)
+
+        infoProvider = New LinkInfoProvider()
+        Await infoProvider.InitializeAsync(serviceProvider)
 
         finder.Verify(Function(x) x.Find(It.IsAny(Of String)), Times.Never)
-        Assert.Null(provider.LinkInfo)
+        Assert.Null(infoProvider.LinkInfo)
 
         solutionEvents.RaiseOpened()
 
         finder.Verify(Function(x) x.Find("Z:\foo\bar"), Times.Once)
-        Assert.Same(info, provider.LinkInfo)
-    End Sub
+        Assert.Same(info, infoProvider.LinkInfo)
+    End Function
 
 
     <Fact()>
-    Public Sub FindsLinkInfoImmediatelyWhenSolutionIsAlreadyOpened()
-        Dim provider As LinkInfoProvider
+    Public Async Function FindsLinkInfoImmediatelyWhenSolutionIsAlreadyOpened() As Threading.Tasks.Task
+        Dim infoProvider As LinkInfoProvider
+        Dim serviceProvider As TestAsyncServiceProvider
         Dim dte As DTE
         Dim finder As Mock(Of ILinkInfoFinder)
         Dim solutionEvents As MockSolutionEvents
@@ -47,16 +54,22 @@ Public Class LinkInfoProviderTests
 
         dte = MockDte(True, "Z:\foo\bar\meep.sln", solutionEvents)
 
-        provider = New LinkInfoProvider(MockDteProvider(dte), finder.Object)
+        serviceProvider = New TestAsyncServiceProvider
+        serviceProvider.AddService(dte)
+        serviceProvider.AddService(finder.Object)
+
+        infoProvider = New LinkInfoProvider
+        Await infoProvider.InitializeAsync(serviceProvider)
 
         finder.Verify(Function(x) x.Find("Z:\foo\bar"), Times.Once)
-        Assert.Same(info, provider.LinkInfo)
-    End Sub
+        Assert.Same(info, infoProvider.LinkInfo)
+    End Function
 
 
     <Fact()>
-    Public Sub ClearsLinkInfoWhenSolutionIsClosed()
-        Dim provider As LinkInfoProvider
+    Public Async Function ClearsLinkInfoWhenSolutionIsClosed() As Threading.Tasks.Task
+        Dim infoProvider As LinkInfoProvider
+        Dim serviceProvider As TestAsyncServiceProvider
         Dim dte As DTE
         Dim finder As Mock(Of ILinkInfoFinder)
         Dim solutionEvents As MockSolutionEvents
@@ -70,16 +83,21 @@ Public Class LinkInfoProviderTests
 
         dte = MockDte(False, "Z:\foo\bar\meep.sln", solutionEvents)
 
-        provider = New LinkInfoProvider(MockDteProvider(dte), finder.Object)
+        serviceProvider = New TestAsyncServiceProvider
+        serviceProvider.AddService(dte)
+        serviceProvider.AddService(finder.Object)
+
+        infoProvider = New LinkInfoProvider
+        Await infoProvider.InitializeAsync(serviceProvider)
 
         solutionEvents.RaiseOpened()
 
-        Assert.Same(info, provider.LinkInfo)
+        Assert.Same(info, infoProvider.LinkInfo)
 
         solutionEvents.RaiseAfterClosing()
 
-        Assert.Null(provider.LinkInfo)
-    End Sub
+        Assert.Null(infoProvider.LinkInfo)
+    End Function
 
 
     Private Shared Function MockDte(
@@ -107,17 +125,6 @@ Public Class LinkInfoProviderTests
         dte.SetupGet(Function(x) x.Solution).Returns(solution.Object)
 
         Return dte.Object
-    End Function
-
-
-    Private Shared Function MockDteProvider(dte As DTE) As IDteProvider
-        Dim provider As Mock(Of IDteProvider)
-
-
-        provider = New Mock(Of IDteProvider)
-        provider.SetupGet(Function(x) x.Dte).Returns(dte)
-
-        Return provider.Object
     End Function
 
 

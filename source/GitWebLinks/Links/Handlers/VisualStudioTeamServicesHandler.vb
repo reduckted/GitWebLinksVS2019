@@ -1,21 +1,13 @@
 Imports LibGit2Sharp
-Imports System.ComponentModel.Composition
 Imports System.Text.RegularExpressions
 
 
-<Export(GetType(ILinkHandler))>
 Public Class VisualStudioTeamServicesHandler
     Inherits LinkHandlerBase
 
 
     Private Shared ReadOnly HttpsPattern As New Regex("^https:\/\/(?<username>[^.]+)\.visualstudio\.com(?:\/(?<collection>[^\/]+))?\/_git\/.+$")
     Private Shared ReadOnly SshPattern As New Regex("^(?<username>[^.]+)@vs-ssh\.visualstudio\.com:22(?:\/(?<collection>[^\/]+))?/_ssh/.+$")
-
-
-    <ImportingConstructor()>
-    Public Sub New(options As IOptions)
-        MyBase.New(options)
-    End Sub
 
 
     Public Overrides ReadOnly Property Name As String

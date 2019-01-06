@@ -1,19 +1,12 @@
 Imports LibGit2Sharp
-Imports System.ComponentModel.Composition
 Imports System.Text.RegularExpressions
 
-<Export(GetType(ILinkHandler))>
+
 Public Class BitbucketServerHandler
     Inherits LinkHandlerBase
 
 
     Private Shared ReadOnly ProjectPattern As New Regex("(?<project>[^\/]+)\/(?<repo>[^\/]+)$")
-
-
-    <ImportingConstructor()>
-    Public Sub New(options As IOptions)
-        MyBase.New(options)
-    End Sub
 
 
     Public Overrides ReadOnly Property Name As String

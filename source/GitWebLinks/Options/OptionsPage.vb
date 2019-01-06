@@ -1,4 +1,3 @@
-Imports Microsoft.VisualStudio.ComponentModelHost
 Imports Microsoft.VisualStudio.Shell
 Imports System.ComponentModel
 Imports System.Runtime.InteropServices
@@ -88,12 +87,7 @@ Public Class OptionsPage
 
 
     Private Function GetOptions() As IOptions
-        Dim componentModel As IComponentModel
-
-
-        componentModel = DirectCast(Site.GetService(GetType(SComponentModel)), IComponentModel)
-
-        Return componentModel.DefaultExportProvider.GetExportedValue(Of IOptions)
+        Return DirectCast(Site.GetService(GetType(IOptions)), IOptions)
     End Function
 
 End Class

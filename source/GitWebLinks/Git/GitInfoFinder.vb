@@ -1,8 +1,6 @@
-﻿Imports LibGit2Sharp
-Imports System.ComponentModel.Composition
+Imports LibGit2Sharp
 
 
-<Export(GetType(IGitInfoFinder))>
 Public Class GitInfoFinder
     Implements IGitInfoFinder
 

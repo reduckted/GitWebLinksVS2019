@@ -1,7 +1,5 @@
-Imports Microsoft.VisualStudio.ComponentModelHost
 Imports Microsoft.VisualStudio.Shell
 Imports Microsoft.VisualStudio.Shell.Interop
-Imports System.ComponentModel.Design
 Imports System.Runtime.InteropServices
 Imports System.Threading
 
@@ -19,23 +17,53 @@ Public NotInheritable Class CopyLinkCommandPackage
     Public Const PackageGuidString As String = "2616be63-dcab-4321-8473-d332f6e89767"
 
 
+    Private ReadOnly cgCommands As New List(Of CommandBase)
+
+
     Protected Overrides Async Function InitializeAsync(
             cancellationToken As CancellationToken,
             progress As IProgress(Of ServiceProgressData)
         ) As Tasks.Task
 
-        Dim componentModel As IComponentModel
-        Dim commandService As OleMenuCommandService
-
-
-        componentModel = DirectCast(Await GetServiceAsync(GetType(SComponentModel)), IComponentModel)
-        commandService = DirectCast(Await GetServiceAsync(GetType(IMenuCommandService)), OleMenuCommandService)
+        AddService(Of IClipboard, Clipboard)()
+        AddService(Of ISettingsManager, SettingsManager)()
+        AddService(Of IOptions, Options)()
+        AddService(Of ILinkInfoProvider, LinkInfoProvider)()
+        AddService(Of ILinkInfoFinder, LinkInfoFinder)()
+        AddService(Of IGitInfoFinder, GitInfoFinder)()
+        AddService(Of ILinkHandlerSource, LinkHandlerSource)()
 
         Await JoinableTaskFactory.SwitchToMainThreadAsync()
 
-        For Each command In componentModel.GetExtensions(Of CommandBase)()
-            command.Initialize(commandService)
-        Next command
+        Await AddCommandAsync(New CopyLinkToCurrentFileCommand)
+        Await AddCommandAsync(New CopyLinkToSolutionExplorerItemCommand)
+    End Function
+
+
+    Private Overloads Sub AddService(Of TService, TImplementation As {New, TService})()
+        AddService(
+            GetType(TService),
+            Async Function(container, cancellationToken, serviceType)
+                Dim service As Object
+                Dim initializable As IAsyncInitializable
+
+
+                service = New TImplementation
+                initializable = TryCast(service, IAsyncInitializable)
+
+                If initializable IsNot Nothing Then
+                    Await initializable.InitializeAsync(New PackageAsyncServiceProvider(Me))
+                End If
+
+                Return service
+            End Function
+        )
+    End Sub
+
+
+    Private Async Function AddCommandAsync(command As CommandBase) As Tasks.Task
+        Await command.InitializeAsync(New PackageAsyncServiceProvider(Me))
+        cgCommands.Add(command)
     End Function
 
 End Class

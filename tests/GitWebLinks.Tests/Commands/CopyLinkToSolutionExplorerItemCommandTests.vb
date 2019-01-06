@@ -1,7 +1,8 @@
-﻿Imports EnvDTE
+Imports EnvDTE
 Imports EnvDTE80
 Imports Microsoft.VisualStudio.Shell
 Imports System.ComponentModel.Design
+
 
 Public Class CopyLinkToSolutionExplorerItemCommandTests
 
@@ -13,18 +14,19 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
     End Enum
 
 
-    Public Class InitializeMethod
+    Public Class InitializeAsyncMethod
 
         <Fact()>
-        Public Sub InitializesTheCommand()
+        Public Async Function InitializesTheCommand() As Threading.Tasks.Task
             Dim command As CopyLinkToSolutionExplorerItemCommand
-            Dim dteProvider As IDteProvider
+            Dim serviceProvider As TestAsyncServiceProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim commandService As Mock(Of IMenuCommandService)
             Dim addedCommands As List(Of MenuCommand)
 
 
-            dteProvider = MockDteProvider()
+            dte = MockDte()
 
             addedCommands = New List(Of MenuCommand)
             infoProvider = New Mock(Of ILinkInfoProvider)
@@ -32,14 +34,20 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             commandService = New Mock(Of IMenuCommandService)
             commandService.Setup(Sub(x) x.AddCommand(It.IsAny(Of MenuCommand))).Callback(Sub(x As MenuCommand) addedCommands.Add(x))
 
-            command = New CopyLinkToSolutionExplorerItemCommand(dteProvider, infoProvider.Object, Mock.Of(Of IClipboard))
-            command.Initialize(commandService.Object)
+            serviceProvider = New TestAsyncServiceProvider
+            serviceProvider.AddService(commandService.Object)
+            serviceProvider.AddService(dte)
+            serviceProvider.AddService(infoProvider.Object)
+            serviceProvider.AddService(Mock.Of(Of IClipboard))
+
+            command = New CopyLinkToSolutionExplorerItemCommand
+            Await command.InitializeAsync(serviceProvider)
 
             Assert.Equal(
                 {Commands.CopyLinkToSolutionExplorerItem},
                 addedCommands.Select(Function(x) x.CommandID)
             )
-        End Sub
+        End Function
 
     End Class
 
@@ -47,36 +55,36 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
     Public Class BeforeQueryStatusMethod
 
         <Fact()>
-        Public Sub HidesTheCommandWhenThereIsNoGitInfo()
+        Public Async Function HidesTheCommandWhenThereIsNoGitInfo() As Threading.Tasks.Task
             Dim command As MenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim status As Integer
 
 
-            dteProvider = MockDteProvider()
+            dte = MockDte()
 
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(DirectCast(Nothing, LinkInfo))
 
-            command = AddCommand(dteProvider, infoProvider.Object)
+            command = Await AddCommandAsync(dte, infoProvider.Object)
             status = command.OleStatus
 
             Assert.False(command.Visible)
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub ShowsTheCommandWhenGitInfoExists()
+        Public Async Function ShowsTheCommandWhenGitInfoExists() As Threading.Tasks.Task
             Dim command As MenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim handler As Mock(Of ILinkHandler)
             Dim status As Integer
             Dim info As LinkInfo
 
 
-            dteProvider = MockDteProvider()
+            dte = MockDte()
 
             handler = New Mock(Of ILinkHandler)
             handler.SetupGet(Function(x) x.Name).Returns("foo")
@@ -86,24 +94,24 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
 
-            command = AddCommand(dteProvider, infoProvider.Object)
+            command = Await AddCommandAsync(dte, infoProvider.Object)
             status = command.OleStatus
 
             Assert.True(command.Visible)
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub ShowsTheCommandForProjectItems()
+        Public Async Function ShowsTheCommandForProjectItems() As Threading.Tasks.Task
             Dim command As OleMenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim handler As Mock(Of ILinkHandler)
             Dim status As Integer
             Dim info As LinkInfo
 
 
-            dteProvider = MockDteProvider(
+            dte = MockDte(
                 selectedItemKind:=SolutionExplorerItemKind.File
             )
 
@@ -115,25 +123,25 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
 
-            command = AddCommand(dteProvider, infoProvider.Object)
+            command = Await AddCommandAsync(dte, infoProvider.Object)
             status = command.OleStatus
 
             Assert.True(command.Visible)
             Assert.Equal("Copy Link to Foo", command.Text)
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub ShowsTheCommandForProjects()
+        Public Async Function ShowsTheCommandForProjects() As Threading.Tasks.Task
             Dim command As OleMenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim handler As Mock(Of ILinkHandler)
             Dim status As Integer
             Dim info As LinkInfo
 
 
-            dteProvider = MockDteProvider(
+            dte = MockDte(
                 selectedItemKind:=SolutionExplorerItemKind.Project
             )
 
@@ -145,25 +153,25 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
 
-            command = AddCommand(dteProvider, infoProvider.Object)
+            command = Await AddCommandAsync(dte, infoProvider.Object)
             status = command.OleStatus
 
             Assert.True(command.Visible)
             Assert.Equal("Copy Link to Foo", command.Text)
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub ShowsTheCommandForSolutions()
+        Public Async Function ShowsTheCommandForSolutions() As Threading.Tasks.Task
             Dim command As OleMenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim handler As Mock(Of ILinkHandler)
             Dim status As Integer
             Dim info As LinkInfo
 
 
-            dteProvider = MockDteProvider(
+            dte = MockDte(
                 selectedItemKind:=SolutionExplorerItemKind.Solution
             )
 
@@ -175,12 +183,12 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
 
-            command = AddCommand(dteProvider, infoProvider.Object)
+            command = Await AddCommandAsync(dte, infoProvider.Object)
             status = command.OleStatus
 
             Assert.True(command.Visible)
             Assert.Equal("Copy Link to Foo", command.Text)
-        End Sub
+        End Function
 
     End Class
 
@@ -188,9 +196,9 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
     Public Class InvokeMethod
 
         <Fact()>
-        Public Sub PutsLinkOnClipboard()
+        Public Async Function PutsLinkOnClipboard() As Threading.Tasks.Task
             Dim command As OleMenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim handler As Mock(Of ILinkHandler)
             Dim clipboard As Mock(Of IClipboard)
@@ -198,7 +206,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             Dim linkInfo As LinkInfo
 
 
-            dteProvider = MockDteProvider(
+            dte = MockDte(
                 selectedFileName:="Z:\foo\bar.txt"
             )
 
@@ -214,21 +222,22 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
 
             clipboard = New Mock(Of IClipboard)
 
-            command = AddCommand(dteProvider, infoProvider.Object, clipboard.Object)
+            command = Await AddCommandAsync(dte, infoProvider.Object, clipboard.Object)
             command.Invoke()
 
             clipboard.Verify(Sub(x) x.SetText("http://foo.bar"), Times.Once)
-        End Sub
+        End Function
 
     End Class
 
 
-    Private Shared Function AddCommand(
-            dteProvider As IDteProvider,
+    Private Shared Async Function AddCommandAsync(
+            dte As DTE,
             infoProvider As ILinkInfoProvider,
             Optional clipboard As IClipboard = Nothing
-        ) As OleMenuCommand
+        ) As Threading.Tasks.Task(Of OleMenuCommand)
 
+        Dim serviceProvider As TestAsyncServiceProvider
         Dim command As CopyLinkToSolutionExplorerItemCommand
         Dim commandService As Mock(Of IMenuCommandService)
         Dim commands As List(Of MenuCommand)
@@ -243,19 +252,24 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
             clipboard = Mock.Of(Of IClipboard)
         End If
 
-        command = New CopyLinkToSolutionExplorerItemCommand(dteProvider, infoProvider, clipboard)
-        command.Initialize(commandService.Object)
+        serviceProvider = New TestAsyncServiceProvider
+        serviceProvider.AddService(dte)
+        serviceProvider.AddService(infoProvider)
+        serviceProvider.AddService(clipboard)
+        serviceProvider.AddService(commandService.Object)
+
+        command = New CopyLinkToSolutionExplorerItemCommand
+        Await command.InitializeAsync(serviceProvider)
 
         Return commands.Cast(Of OleMenuCommand).First()
     End Function
 
 
-    Private Shared Function MockDteProvider(
+    Private Shared Function MockDte(
             Optional selectedFileName As String = "Z:\foo.txt",
             Optional selectedItemKind As SolutionExplorerItemKind = SolutionExplorerItemKind.File
-        ) As IDteProvider
+        ) As DTE
 
-        Dim provider As Mock(Of IDteProvider)
         Dim dte As Mock(Of DTE)
         Dim dte2 As Mock(Of DTE2)
         Dim toolWindows As Mock(Of ToolWindows)
@@ -292,10 +306,7 @@ Public Class CopyLinkToSolutionExplorerItemCommandTests
         dte2 = dte.As(Of DTE2)()
         dte2.SetupGet(Function(x) x.ToolWindows).Returns(toolWindows.Object)
 
-        provider = New Mock(Of IDteProvider)
-        provider.SetupGet(Function(x) x.Dte).Returns(dte.Object)
-
-        Return provider.Object
+        Return dte.Object
     End Function
 
 

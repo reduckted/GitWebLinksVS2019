@@ -1,9 +1,11 @@
-Imports System.ComponentModel.Composition
+Imports GitWebLinks
+Imports Microsoft.VisualStudio.Shell
+Imports System.Threading.Tasks
 Imports System.Xml.Linq
 
 
-<Export(GetType(IOptions))>
 Public Class Options
+    Implements IAsyncInitializable
     Implements IOptions
 
 
@@ -22,17 +24,17 @@ Public Class Options
     }
 
 
-    Private ReadOnly cgSettingsManager As ISettingsManager
     Private ReadOnly cgGitHubEnterpriseServers As New List(Of ServerUrl)(DefaultGitHubEnterpriseServers)
     Private ReadOnly cgBitbucketServerServers As New List(Of ServerUrl)(DefaultBitbucketServerServers)
-    Private cgLinkType As LinkType
+    Private cgSettingsManager As ISettingsManager
 
 
-    <ImportingConstructor()>
-    Public Sub New(settingsManager As ISettingsManager)
-        cgSettingsManager = settingsManager
+    Public Async Function InitializeAsync(provider As IAsyncServiceProvider) As Threading.Tasks.Task _
+        Implements IAsyncInitializable.InitializeAsync
+
+        cgSettingsManager = Await provider.GetServiceAsync(Of ISettingsManager)
         LoadSettings()
-    End Sub
+    End Function
 
 
     Public Property GitHubEnterpriseUrls As IEnumerable(Of ServerUrl) _
@@ -71,15 +73,6 @@ Public Class Options
 
     Public Property LinkType As LinkType _
         Implements IOptions.LinkType
-
-        Get
-            Return cgLinkType
-        End Get
-
-        Set
-            cgLinkType = Value
-        End Set
-    End Property
 
 
     Private Sub LoadSettings()

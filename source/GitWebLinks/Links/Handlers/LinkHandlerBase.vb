@@ -1,9 +1,12 @@
+Imports GitWebLinks
 Imports LibGit2Sharp
+Imports Microsoft.VisualStudio.Shell
 Imports System.IO
 Imports System.Text.RegularExpressions
 
 
 Public MustInherit Class LinkHandlerBase
+    Implements IAsyncInitializable
     Implements ILinkHandler
 
 
@@ -13,12 +16,21 @@ Public MustInherit Class LinkHandlerBase
     Private Shared ReadOnly UsernamePattern As New Regex("(?<scheme>https?://)[^@]+@(?<address>.+)")
 
 
-    Protected Sub New(options As IOptions)
-        Me.Options = options
-    End Sub
+    Private cgOptions As IOptions
+
+
+    Public Async Function InitializeAsync(provider As IAsyncServiceProvider) As Threading.Tasks.Task _
+        Implements IAsyncInitializable.InitializeAsync
+
+        cgOptions = Await provider.GetServiceAsync(Of IOptions)
+    End Function
 
 
     Protected ReadOnly Property Options As IOptions
+        Get
+            Return cgOptions
+        End Get
+    End Property
 
 
     Public MustOverride ReadOnly Property Name As String _

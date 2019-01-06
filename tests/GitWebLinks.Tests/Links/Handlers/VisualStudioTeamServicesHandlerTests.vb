@@ -1,14 +1,15 @@
 Imports LibGit2Sharp
 Imports System.IO
 
+
 Public Class VisualStudioTeamServicesHandlerTests
 
     Public Class NameProperty
 
         <Fact()>
-        Public Sub ReturnsVisualStudioTeamServices()
-            Assert.Equal("Visual Studio Team Services", CreateHandler().Name)
-        End Sub
+        Public Async Function ReturnsVisualStudioTeamServices() As Threading.Tasks.Task
+            Assert.Equal("Visual Studio Team Services", (Await CreateHandlerAsync()).Name)
+        End Function
 
     End Class
 
@@ -17,25 +18,25 @@ Public Class VisualStudioTeamServicesHandlerTests
 
         <Theory()>
         <MemberData(NameOf(GetRemotes), MemberType:=GetType(VisualStudioTeamServicesHandlerTests))>
-        Public Sub MatchesVisualStudioTeamServicesServers(remote As String)
+        Public Async Function MatchesVisualStudioTeamServicesServers(remote As String) As Threading.Tasks.Task
             Dim handler As VisualStudioTeamServicesHandler
 
 
-            handler = CreateHandler()
+            handler = Await CreateHandlerAsync()
 
             Assert.True(handler.IsMatch(remote))
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub DoesNotMatchOtherServerUrls()
+        Public Async Function DoesNotMatchOtherServerUrls() As Threading.Tasks.Task
             Dim handler As VisualStudioTeamServicesHandler
 
 
-            handler = CreateHandler()
+            handler = Await CreateHandlerAsync()
 
             Assert.False(handler.IsMatch("https://codeplex.com/foo/bar.git"))
-        End Sub
+        End Function
 
     End Class
 
@@ -44,7 +45,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
         <Theory()>
         <MemberData(NameOf(GetNonCollectionRemotes), MemberType:=GetType(VisualStudioTeamServicesHandlerTests))>
-        Public Sub CreatesCorrectLinkFromRemoteUrlWithoutCollection(remote As String)
+        Public Async Function CreatesCorrectLinkFromRemoteUrlWithoutCollection(remote As String) As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As VisualStudioTeamServicesHandler
                 Dim info As GitInfo
@@ -53,7 +54,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 info = New GitInfo(dir.FullPath, remote)
                 fileName = Path.Combine(dir.FullPath, "src\file.cs")
-                handler = CreateHandler()
+                handler = Await CreateHandlerAsync()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -63,12 +64,12 @@ Public Class VisualStudioTeamServicesHandlerTests
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Theory()>
         <MemberData(NameOf(GetCollectionRemotes), MemberType:=GetType(VisualStudioTeamServicesHandlerTests))>
-        Public Sub CreatesCorrectLinkFromRemoteUrlWithCollection(remote As String)
+        Public Async Function CreatesCorrectLinkFromRemoteUrlWithCollection(remote As String) As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As VisualStudioTeamServicesHandler
                 Dim info As GitInfo
@@ -77,7 +78,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 info = New GitInfo(dir.FullPath, remote)
                 fileName = Path.Combine(dir.FullPath, "src\file.cs")
-                handler = CreateHandler()
+                handler = Await CreateHandlerAsync()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -87,11 +88,11 @@ Public Class VisualStudioTeamServicesHandlerTests
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub CreatesCorrectLinkWhenPathContainsSpace()
+        Public Async Function CreatesCorrectLinkWhenPathContainsSpace() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As VisualStudioTeamServicesHandler
                 Dim info As GitInfo
@@ -100,7 +101,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 info = New GitInfo(dir.FullPath, "ssh://foo@vs-ssh.visualstudio.com:22/_ssh/MyRepo")
                 fileName = Path.Combine(dir.FullPath, "src\sub dir\file.cs")
-                handler = CreateHandler()
+                handler = Await CreateHandlerAsync()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -110,11 +111,11 @@ Public Class VisualStudioTeamServicesHandlerTests
                     handler.MakeUrl(info, fileName, New LineSelection(2, 2))
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub CreatesCorrectLinkWithSingleLineSelection()
+        Public Async Function CreatesCorrectLinkWithSingleLineSelection() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As VisualStudioTeamServicesHandler
                 Dim info As GitInfo
@@ -123,7 +124,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 info = New GitInfo(dir.FullPath, "ssh://foo@vs-ssh.visualstudio.com:22/_ssh/MyRepo")
                 fileName = Path.Combine(dir.FullPath, "src\file.cs")
-                handler = CreateHandler()
+                handler = Await CreateHandlerAsync()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -133,11 +134,11 @@ Public Class VisualStudioTeamServicesHandlerTests
                     handler.MakeUrl(info, fileName, New LineSelection(2, 2))
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub CreatesCorrectLinkWithMultiLineSelection()
+        Public Async Function CreatesCorrectLinkWithMultiLineSelection() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As VisualStudioTeamServicesHandler
                 Dim info As GitInfo
@@ -146,7 +147,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 info = New GitInfo(dir.FullPath, "ssh://foo@vs-ssh.visualstudio.com:22/_ssh/MyRepo")
                 fileName = Path.Combine(dir.FullPath, "src\file.cs")
-                handler = CreateHandler()
+                handler = Await CreateHandlerAsync()
 
                 Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                 End Using
@@ -156,11 +157,11 @@ Public Class VisualStudioTeamServicesHandlerTests
                     handler.MakeUrl(info, fileName, New LineSelection(1, 3))
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub UsesCurrentBranch()
+        Public Async Function UsesCurrentBranch() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As VisualStudioTeamServicesHandler
                 Dim info As GitInfo
@@ -169,7 +170,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 info = New GitInfo(dir.FullPath, "ssh://foo@vs-ssh.visualstudio.com:22/_ssh/MyRepo")
                 fileName = Path.Combine(dir.FullPath, "src\file.cs")
-                handler = CreateHandler(linkType:=LinkType.Branch)
+                handler = Await CreateHandlerAsync(linkType:=LinkType.Branch)
 
                 Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                     LibGit2Sharp.Commands.Checkout(repo, repo.CreateBranch("feature/work"))
@@ -180,11 +181,11 @@ Public Class VisualStudioTeamServicesHandlerTests
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub UsesCurrentHash()
+        Public Async Function UsesCurrentHash() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As VisualStudioTeamServicesHandler
                 Dim info As GitInfo
@@ -194,7 +195,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 info = New GitInfo(dir.FullPath, "ssh://foo@vs-ssh.visualstudio.com:22/_ssh/MyRepo")
                 fileName = Path.Combine(dir.FullPath, "src\file.cs")
-                handler = CreateHandler(linkType:=LinkType.Hash)
+                handler = Await CreateHandlerAsync(linkType:=LinkType.Hash)
 
                 Using repo = LinkHandlerHelpers.InitializeRepository(dir.FullPath)
                     sha = repo.Head.Tip.Sha
@@ -205,7 +206,7 @@ Public Class VisualStudioTeamServicesHandlerTests
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
-        End Sub
+        End Function
 
     End Class
 
@@ -227,14 +228,22 @@ Public Class VisualStudioTeamServicesHandlerTests
     End Function
 
 
-    Private Shared Function CreateHandler(Optional linkType As LinkType = LinkType.Branch) As VisualStudioTeamServicesHandler
+    Private Shared Async Function CreateHandlerAsync(Optional linkType As LinkType = LinkType.Branch) As Threading.Tasks.Task(Of VisualStudioTeamServicesHandler)
         Dim options As Mock(Of IOptions)
+        Dim provider As TestAsyncServiceProvider
+        Dim handler As VisualStudioTeamServicesHandler
 
 
         options = New Mock(Of IOptions)
         options.SetupGet(Function(x) x.LinkType).Returns(linkType)
 
-        Return New VisualStudioTeamServicesHandler(options.Object)
+        provider = New TestAsyncServiceProvider
+        provider.AddService(options.Object)
+
+        handler = New VisualStudioTeamServicesHandler
+        Await handler.InitializeAsync(provider)
+
+        Return handler
     End Function
 
 End Class

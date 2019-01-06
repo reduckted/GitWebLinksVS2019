@@ -1,5 +1,6 @@
-﻿Imports LibGit2Sharp
+Imports LibGit2Sharp
 Imports System.IO
+
 
 Public Class GitInfoFinderTests
 

@@ -1,7 +1,3 @@
-﻿Imports System.ComponentModel.Composition
-
-
-<Export(GetType(IClipboard))>
 Public Class Clipboard
     Implements IClipboard
 

@@ -1,4 +1,4 @@
-﻿Imports EnvDTE
+Imports EnvDTE
 Imports EnvDTE80
 Imports Microsoft.VisualStudio.Shell
 Imports System.ComponentModel.Design
@@ -6,27 +6,31 @@ Imports System.ComponentModel.Design
 
 Public Class CopyLinkToCurrentFileCommandTests
 
-    Public Class InitializeMethod
+    Public Class InitializeAsyncMethod
 
         <Fact()>
-        Public Sub InitializesTheCommand()
+        Public Async Function InitializesTheCommand() As Threading.Tasks.Task
             Dim command As CopyLinkToCurrentFileCommand
-            Dim dteProvider As IDteProvider
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim commandService As Mock(Of IMenuCommandService)
             Dim addedCommands As List(Of MenuCommand)
+            Dim serviceProvider As TestAsyncServiceProvider
 
 
             addedCommands = New List(Of MenuCommand)
             infoProvider = New Mock(Of ILinkInfoProvider)
 
-            dteProvider = MockDteProvider()
-
             commandService = New Mock(Of IMenuCommandService)
             commandService.Setup(Sub(x) x.AddCommand(It.IsAny(Of MenuCommand))).Callback(Sub(x As MenuCommand) addedCommands.Add(x))
 
-            command = New CopyLinkToCurrentFileCommand(dteProvider, infoProvider.Object, Mock.Of(Of IClipboard))
-            command.Initialize(commandService.Object)
+            serviceProvider = New TestAsyncServiceProvider
+            serviceProvider.AddService(infoProvider.Object)
+            serviceProvider.AddService(Mock.Of(Of IClipboard))
+            serviceProvider.AddService(commandService.Object)
+            serviceProvider.AddService(MockDte())
+
+            command = New CopyLinkToCurrentFileCommand()
+            Await command.InitializeAsync(serviceProvider)
 
             Assert.Equal(
                 {
@@ -35,7 +39,7 @@ Public Class CopyLinkToCurrentFileCommandTests
                 },
                 addedCommands.Select(Function(x) x.CommandID)
             )
-        End Sub
+        End Function
 
     End Class
 
@@ -43,36 +47,36 @@ Public Class CopyLinkToCurrentFileCommandTests
     Public Class BeforeQueryStatusMethod
 
         <Fact()>
-        Public Sub HidesTheCommandWhenThereIsNoLinkInfo()
+        Public Async Function HidesTheCommandWhenThereIsNoLinkInfo() As Threading.Tasks.Task
             Dim command As MenuCommand
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim status As Integer
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
 
 
-            dteProvider = MockDteProvider()
+            dte = MockDte()
 
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(DirectCast(Nothing, LinkInfo))
 
-            command = AddCommand(Commands.CopyLinkToCurrentFile, dteProvider, infoProvider.Object)
+            command = Await AddCommandAsync(Commands.CopyLinkToCurrentFile, dte, infoProvider.Object)
             status = command.OleStatus
 
             Assert.False(command.Visible)
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub ShowsCurrentFileCommandWhenGitInfoExists()
+        Public Async Function ShowsCurrentFileCommandWhenGitInfoExists() As Threading.Tasks.Task
             Dim command As OleMenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim handler As Mock(Of ILinkHandler)
             Dim status As Integer
             Dim info As LinkInfo
 
 
-            dteProvider = MockDteProvider()
+            dte = MockDte()
 
             handler = New Mock(Of ILinkHandler)
             handler.SetupGet(Function(x) x.Name).Returns("Foo")
@@ -82,25 +86,25 @@ Public Class CopyLinkToCurrentFileCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
 
-            command = AddCommand(Commands.CopyLinkToCurrentFile, dteProvider, infoProvider.Object)
+            command = Await AddCommandAsync(Commands.CopyLinkToCurrentFile, dte, infoProvider.Object)
             status = command.OleStatus
 
             Assert.True(command.Visible)
             Assert.Equal("Copy Link to Foo", command.Text)
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub ShowsSelectionCommandWhenGitInfoExistsAndNoMultiLineSelection()
+        Public Async Function ShowsSelectionCommandWhenGitInfoExistsAndNoMultiLineSelection() As Threading.Tasks.Task
             Dim command As OleMenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim handler As Mock(Of ILinkHandler)
             Dim status As Integer
             Dim info As LinkInfo
 
 
-            dteProvider = MockDteProvider(
+            dte = MockDte(
                 selection:=New LineSelection(3, 3)
             )
 
@@ -112,25 +116,25 @@ Public Class CopyLinkToCurrentFileCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
 
-            command = AddCommand(Commands.CopyLinkToSelection, dteProvider, infoProvider.Object)
+            command = Await AddCommandAsync(Commands.CopyLinkToSelection, dte, infoProvider.Object)
             status = command.OleStatus
 
             Assert.True(command.Visible)
             Assert.Equal("Copy Link to Foo", command.Text)
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub ShowsSelectionCommandWhenGitInfoExistsAndMultipleLinesAreSelected()
+        Public Async Function ShowsSelectionCommandWhenGitInfoExistsAndMultipleLinesAreSelected() As Threading.Tasks.Task
             Dim command As OleMenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim handler As Mock(Of ILinkHandler)
             Dim status As Integer
             Dim info As LinkInfo
 
 
-            dteProvider = MockDteProvider(
+            dte = MockDte(
                 selection:=New LineSelection(3, 4)
             )
 
@@ -142,12 +146,12 @@ Public Class CopyLinkToCurrentFileCommandTests
             infoProvider = New Mock(Of ILinkInfoProvider)
             infoProvider.SetupGet(Function(x) x.LinkInfo).Returns(info)
 
-            command = AddCommand(Commands.CopyLinkToSelection, dteProvider, infoProvider.Object)
+            command = Await AddCommandAsync(Commands.CopyLinkToSelection, dte, infoProvider.Object)
             status = command.OleStatus
 
             Assert.True(command.Visible)
             Assert.Equal("Copy Link to Foo", command.Text)
-        End Sub
+        End Function
 
     End Class
 
@@ -155,9 +159,9 @@ Public Class CopyLinkToCurrentFileCommandTests
     Public Class InvokeMethod
 
         <Fact()>
-        Public Sub PutsLinkOnClipboardForCurrentFile()
+        Public Async Function PutsLinkOnClipboardForCurrentFile() As Threading.Tasks.Task
             Dim command As OleMenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim handler As Mock(Of ILinkHandler)
             Dim clipboard As Mock(Of IClipboard)
@@ -165,7 +169,7 @@ Public Class CopyLinkToCurrentFileCommandTests
             Dim linkInfo As LinkInfo
 
 
-            dteProvider = MockDteProvider(
+            dte = MockDte(
                 activeFileName:="Z:\foo\bar.txt"
             )
 
@@ -181,17 +185,17 @@ Public Class CopyLinkToCurrentFileCommandTests
 
             clipboard = New Mock(Of IClipboard)
 
-            command = AddCommand(Commands.CopyLinkToCurrentFile, dteProvider, infoProvider.Object, clipboard.Object)
+            command = Await AddCommandAsync(Commands.CopyLinkToCurrentFile, dte, infoProvider.Object, clipboard.Object)
             command.Invoke()
 
             clipboard.Verify(Sub(x) x.SetText("http://foo.bar"), Times.Once)
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub PutsLinkOnClipboardForSingleLineSelection()
+        Public Async Function PutsLinkOnClipboardForSingleLineSelection() As Threading.Tasks.Task
             Dim command As OleMenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim handler As Mock(Of ILinkHandler)
             Dim clipboard As Mock(Of IClipboard)
@@ -199,7 +203,7 @@ Public Class CopyLinkToCurrentFileCommandTests
             Dim linkInfo As LinkInfo
 
 
-            dteProvider = MockDteProvider(
+            dte = MockDte(
                 activeFileName:="Z:\foo\bar.txt",
                 selection:=New LineSelection(34, 34)
             )
@@ -219,17 +223,17 @@ Public Class CopyLinkToCurrentFileCommandTests
 
             clipboard = New Mock(Of IClipboard)
 
-            command = AddCommand(Commands.CopyLinkToSelection, dteProvider, infoProvider.Object, clipboard.Object)
+            command = Await AddCommandAsync(Commands.CopyLinkToSelection, dte, infoProvider.Object, clipboard.Object)
             command.Invoke()
 
             clipboard.Verify(Sub(x) x.SetText("http://foo.bar"), Times.Once)
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub PutsLinkOnClipboardForMultipleLineSelection()
+        Public Async Function PutsLinkOnClipboardForMultipleLineSelection() As Threading.Tasks.Task
             Dim command As OleMenuCommand
-            Dim dteProvider As IDteProvider
+            Dim dte As DTE
             Dim infoProvider As Mock(Of ILinkInfoProvider)
             Dim handler As Mock(Of ILinkHandler)
             Dim clipboard As Mock(Of IClipboard)
@@ -237,7 +241,7 @@ Public Class CopyLinkToCurrentFileCommandTests
             Dim linkInfo As LinkInfo
 
 
-            dteProvider = MockDteProvider(
+            dte = MockDte(
                 activeFileName:="Z:\foo\bar.txt",
                 selection:=New LineSelection(21, 38)
             )
@@ -257,25 +261,26 @@ Public Class CopyLinkToCurrentFileCommandTests
 
             clipboard = New Mock(Of IClipboard)
 
-            command = AddCommand(Commands.CopyLinkToSelection, dteProvider, infoProvider.Object, clipboard.Object)
+            command = Await AddCommandAsync(Commands.CopyLinkToSelection, dte, infoProvider.Object, clipboard.Object)
             command.Invoke()
 
             clipboard.Verify(Sub(x) x.SetText("http://foo.bar"), Times.Once)
-        End Sub
+        End Function
 
     End Class
 
 
-    Private Shared Function AddCommand(
+    Private Shared Async Function AddCommandAsync(
             id As CommandID,
-            dteProvider As IDteProvider,
+            dte As DTE,
             infoProvider As ILinkInfoProvider,
             Optional clipboard As IClipboard = Nothing
-        ) As OleMenuCommand
+        ) As Threading.Tasks.Task(Of OleMenuCommand)
 
         Dim command As CopyLinkToCurrentFileCommand
         Dim commandService As Mock(Of IMenuCommandService)
         Dim commands As List(Of MenuCommand)
+        Dim serviceProvider As TestAsyncServiceProvider
 
 
         commands = New List(Of MenuCommand)
@@ -287,19 +292,24 @@ Public Class CopyLinkToCurrentFileCommandTests
             clipboard = Mock.Of(Of IClipboard)
         End If
 
-        command = New CopyLinkToCurrentFileCommand(dteProvider, infoProvider, clipboard)
-        command.Initialize(commandService.Object)
+        serviceProvider = New TestAsyncServiceProvider
+        serviceProvider.AddService(dte)
+        serviceProvider.AddService(infoProvider)
+        serviceProvider.AddService(clipboard)
+        serviceProvider.AddService(commandService.Object)
+
+        command = New CopyLinkToCurrentFileCommand()
+        Await command.InitializeAsync(serviceProvider)
 
         Return commands.Cast(Of OleMenuCommand).First(Function(x) x.CommandID.Equals(id))
     End Function
 
 
-    Private Shared Function MockDteProvider(
+    Private Shared Function MockDte(
             Optional activeFileName As String = "Z:\foo.txt",
             Optional selection As LineSelection = Nothing
-        ) As IDteProvider
+        ) As DTE
 
-        Dim provider As Mock(Of IDteProvider)
         Dim dte As Mock(Of DTE)
         Dim dte2 As Mock(Of DTE2)
         Dim activeDocument As Mock(Of Document)
@@ -322,10 +332,7 @@ Public Class CopyLinkToCurrentFileCommandTests
         dte2 = dte.As(Of DTE2)()
         dte2.SetupGet(Function(x) x.ActiveDocument).Returns(activeDocument.Object)
 
-        provider = New Mock(Of IDteProvider)
-        provider.SetupGet(Function(x) x.Dte).Returns(dte.Object)
-
-        Return provider.Object
+        Return dte.Object
     End Function
 
 End Class

@@ -1,26 +1,22 @@
-﻿Imports EnvDTE
-Imports System.ComponentModel.Composition
+Imports EnvDTE
 
 
-<Export(GetType(ILinkInfoProvider))>
 Public Class LinkInfoProvider
+    Implements IAsyncInitializable
     Implements ILinkInfoProvider
 
 
-    Private ReadOnly cgDte As DTE
-    Private ReadOnly cgLinkInfoFinder As ILinkInfoFinder
-    Private ReadOnly cgSolutionEvents As SolutionEvents
+    Private cgDte As DTE
+    Private cgLinkInfoFinder As ILinkInfoFinder
+    Private cgSolutionEvents As SolutionEvents
     Private cgCurrentLinkInfo As LinkInfo
 
 
-    <ImportingConstructor()>
-    Public Sub New(
-            dteProvider As IDteProvider,
-            linkInfoFinder As ILinkInfoFinder
-        )
+    Public Async Function InitializeAsync(provider As IAsyncServiceProvider) As Threading.Tasks.Task _
+        Implements IAsyncInitializable.InitializeAsync
 
-        cgDte = dteProvider.Dte
-        cgLinkInfoFinder = linkInfoFinder
+        cgDte = Await provider.GetServiceAsync(Of DTE)()
+        cgLinkInfoFinder = Await provider.GetServiceAsync(Of ILinkInfoFinder)()
         cgSolutionEvents = cgDte.Events.SolutionEvents
 
         AddHandler cgSolutionEvents.AfterClosing, AddressOf OnSolutionClosed
@@ -29,7 +25,7 @@ Public Class LinkInfoProvider
         If cgDte.Solution.IsOpen Then
             OnSolutionOpened()
         End If
-    End Sub
+    End Function
 
 
     Private Sub OnSolutionOpened()

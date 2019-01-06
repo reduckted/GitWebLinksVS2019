@@ -1,24 +1,29 @@
-﻿Imports Microsoft.VisualStudio.Settings
-Imports Microsoft.VisualStudio.Shell
+Imports Microsoft.VisualStudio.Settings
+Imports Microsoft.VisualStudio.Shell.Interop
 Imports Microsoft.VisualStudio.Shell.Settings
-Imports System.ComponentModel.Composition
 
 
-<Export(GetType(ISettingsManager))>
 Public Class SettingsManager
+    Implements IAsyncInitializable
     Implements ISettingsManager
 
 
     Private Const CollectionPath As String = "GitWebLinks"
 
 
-    Private ReadOnly cgStore As WritableSettingsStore
+    Private cgStore As WritableSettingsStore
 
 
-    <ImportingConstructor()>
-    Public Sub New(serviceProvider As SVsServiceProvider)
+    Public Async Function InitializeAsync(provider As IAsyncServiceProvider) As Threading.Tasks.Task _
+        Implements IAsyncInitializable.InitializeAsync
+
+        Dim serviceProvider As IVsSettingsManager
+
+
+        serviceProvider = Await provider.GetServiceAsync(Of SVsSettingsManager, IVsSettingsManager)
+
         cgStore = New ShellSettingsManager(serviceProvider).GetWritableSettingsStore(SettingsScope.UserSettings)
-    End Sub
+    End Function
 
 
     Public Function Contains(name As String) As Boolean _

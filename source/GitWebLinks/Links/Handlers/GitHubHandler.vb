@@ -1,19 +1,11 @@
 Imports LibGit2Sharp
-Imports System.ComponentModel.Composition
 
 
-<Export(GetType(ILinkHandler))>
 Public Class GitHubHandler
     Inherits LinkHandlerBase
 
 
     Private Shared ReadOnly GitHubUrl As New ServerUrl("https://github.com", "git@github.com")
-
-
-    <ImportingConstructor()>
-    Public Sub New(options As IOptions)
-        MyBase.New(options)
-    End Sub
 
 
     Public Overrides ReadOnly Property Name As String

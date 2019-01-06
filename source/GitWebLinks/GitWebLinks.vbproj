@@ -82,8 +82,10 @@
     <Compile Include="Links\Handlers\BitbucketServerHandler.vb" />
     <Compile Include="Links\Handlers\LinkHandlerBase.vb" />
     <Compile Include="Links\Handlers\VisualStudioTeamServicesHandler.vb" />
+    <Compile Include="Links\ILinkHandlerSource.vb" />
     <Compile Include="Links\ILinkInfoFinder.vb" />
     <Compile Include="Links\ILinkInfoProvider.vb" />
+    <Compile Include="Links\LinkHandlerSource.vb" />
     <Compile Include="Links\LinkInfo.vb" />
     <Compile Include="Links\LinkInfoFinder.vb" />
     <Compile Include="Links\Handlers\BitbucketCloudHandler.vb" />
@@ -106,10 +108,11 @@
     <Compile Include="Options\ServerUrlModel.vb" />
     <Compile Include="Options\SettingsManager.vb" />
     <Compile Include="Utilities\Clipboard.vb" />
-    <Compile Include="Utilities\DteProvider.vb" />
     <Compile Include="Links\LinkInfoProvider.vb" />
+    <Compile Include="Utilities\IAsyncInitializable.vb" />
     <Compile Include="Utilities\IClipboard.vb" />
-    <Compile Include="Utilities\IDteProvider.vb" />
+    <Compile Include="Utilities\IAsyncServiceProvider.vb" />
+    <Compile Include="Utilities\PackageAsyncServiceProvider.vb" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -206,7 +209,6 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xaml" />
