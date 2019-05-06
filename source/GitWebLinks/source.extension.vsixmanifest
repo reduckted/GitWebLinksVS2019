@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="GitWebLinks.reduckted.51c9bc00-f868-4061-a75c-8f6e758bb7f6" Version="1.2.0" Language="en-US" Publisher="reduckted" />
+        <Identity Id="GitWebLinks.reduckted.51c9bc00-f868-4061-a75c-8f6e758bb7f6" Version="1.3.0" Language="en-US" Publisher="reduckted" />
         <DisplayName>Git Web Links</DisplayName>
         <Description xml:space="preserve">Copy links to files in their online Git repositories. Works with GitHub, GitHub Enterprise, Bitbucket Cloud, Bitbucket Server and Azure DevOps.</Description>
         <MoreInfo>https://github.com/reduckted/GitWebLinks</MoreInfo>
