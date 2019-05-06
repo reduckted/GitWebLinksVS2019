@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0
+
+* Added support for Azure DevOps repositories.
+
+## 1.2.0
+
+* Added Visual Studio 2019 support
+
 ## v1.1.2
 
 * Added support for Visual Studio Team Services repositories in collections.
