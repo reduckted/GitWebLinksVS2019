@@ -3,11 +3,11 @@
     <Metadata>
         <Identity Id="GitWebLinks.reduckted.51c9bc00-f868-4061-a75c-8f6e758bb7f6" Version="1.2.0" Language="en-US" Publisher="reduckted" />
         <DisplayName>Git Web Links</DisplayName>
-        <Description xml:space="preserve">Copy links to files in their online Git repositories. Works with GitHub, GitHub Enterprise, Bitbucket Cloud, Bitbucket Server and Visual Studio Team Services.</Description>
+        <Description xml:space="preserve">Copy links to files in their online Git repositories. Works with GitHub, GitHub Enterprise, Bitbucket Cloud, Bitbucket Server and Azure DevOps.</Description>
         <MoreInfo>https://github.com/reduckted/GitWebLinks</MoreInfo>
         <Icon>Resources\icon.png</Icon>
         <PreviewImage>Resources\preview.png</PreviewImage>
-        <Tags>github, bitbucket, link, url, vsts</Tags>
+        <Tags>github, bitbucket, link, url, vsts, azure-devops</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0,17.0)" />

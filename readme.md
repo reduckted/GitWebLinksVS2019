@@ -4,14 +4,14 @@ Get it from the [Visual Studio Marketplace](https://marketplace.visualstudio.com
 
 _Looking for the Visual Studio Code extension? [It's over here!](https://github.com/reduckted/vscode-gitweblinks)_
 
-Copy links to files in their online Git repositories from inside Visual Studio 2017.
+Copy links to files in their online Git repositories from inside Visual Studio 2017+.
 
 Works with:
 * GitHub
 * GitHub Enterprise
 * Bitbucket Server
 * Bitbucket Cloud
-* Visual Studio Team Services
+* Azure DevOps
 
 :information_source: For GitHub Enterprise and Bitbucket Server, there is some configuration required. [See below for more details](#github-enterprise-and-bitbucket-server).
 

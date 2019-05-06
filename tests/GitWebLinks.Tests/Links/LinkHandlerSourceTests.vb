@@ -17,6 +17,7 @@ Public Class LinkHandlerSourceTests
 
         Assert.Equal(
             {
+                GetType(AzureDevOpsHandler),
                 GetType(BitbucketCloudHandler),
                 GetType(BitbucketServerHandler),
                 GetType(GitHubHandler),
