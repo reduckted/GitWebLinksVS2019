@@ -6,7 +6,7 @@ $root = Split-Path -Path $PSCommandPath -Parent | Join-Path -ChildPath "..\.." |
 $msbuild = ""
 
 foreach ($edition in @("Community", "Professional", "Enterprise")) {
-    $exe = Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath "Microsoft Visual Studio\2017\$edition\MSBuild\15.0\Bin\msbuild.exe"
+    $exe = Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath "Microsoft Visual Studio\2019\$edition\MSBuild\Current\Bin\msbuild.exe"
 
     if (Test-Path $exe) {
         $msbuild = $exe
