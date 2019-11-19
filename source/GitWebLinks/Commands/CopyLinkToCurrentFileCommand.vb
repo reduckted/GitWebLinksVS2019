@@ -36,7 +36,6 @@ Public Class CopyLinkToCurrentFileCommand
                 Dim lineSelection As LineSelection
                 Dim url As String
 
-
                 If id.Equals(Commands.CopyLinkToCurrentFile) Then
                     textSelection = Nothing
                 Else
@@ -44,10 +43,12 @@ Public Class CopyLinkToCurrentFileCommand
                 End If
 
                 If textSelection IsNot Nothing Then
-                    lineSelection = New LineSelection(textSelection.TopLine, textSelection.BottomLine)
+                    lineSelection = New LineSelection(textSelection.TopLine, textSelection.BottomLine, If(textSelection.TopPoint Is Nothing, 0, textSelection.TopPoint.DisplayColumn), If(textSelection.BottomPoint Is Nothing, 0, textSelection.BottomPoint.DisplayColumn))
                 Else
                     lineSelection = Nothing
                 End If
+
+
 
                 url = LinkInfo.Handler.MakeUrl(LinkInfo.GitInfo, filePath, lineSelection)
 

@@ -84,8 +84,8 @@ Public Class AzureDevOpsHandlerTests
                 End Using
 
                 Assert.Equal(
-                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Fsub%20dir%2Ffile.cs&version=GBmaster&line=2",
-                    handler.MakeUrl(info, fileName, New LineSelection(2, 2))
+                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Fsub%20dir%2Ffile.cs&version=GBmaster&line=2&lineStartColumn=2&lineEndColumn=2",
+                    handler.MakeUrl(info, fileName, New LineSelection(2, 2, 2, 2))
                 )
             End Using
         End Function
@@ -108,8 +108,8 @@ Public Class AzureDevOpsHandlerTests
                 End Using
 
                 Assert.Equal(
-                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster&line=2",
-                    handler.MakeUrl(info, fileName, New LineSelection(2, 2))
+                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster&line=2&lineStartColumn=2&lineEndColumn=2",
+                    handler.MakeUrl(info, fileName, New LineSelection(2, 2, 2, 2))
                 )
             End Using
         End Function
@@ -132,8 +132,8 @@ Public Class AzureDevOpsHandlerTests
                 End Using
 
                 Assert.Equal(
-                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster&line=1&lineEnd=3",
-                    handler.MakeUrl(info, fileName, New LineSelection(1, 3))
+                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster&line=1&lineStartColumn=1&lineEndColumn=1&lineEnd=3",
+                    handler.MakeUrl(info, fileName, New LineSelection(1, 3, 1, 1))
                 )
             End Using
         End Function

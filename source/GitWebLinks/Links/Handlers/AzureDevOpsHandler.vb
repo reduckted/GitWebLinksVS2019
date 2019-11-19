@@ -85,7 +85,7 @@ Public Class AzureDevOpsHandler
         Dim args As String
 
 
-        args = $"&line={selection.StartLineNumber}"
+        args = $"&line={selection.StartLineNumber}&lineStartColumn={selection.StartColumnNumber}&lineEndColumn={selection.EndColumnNumber}"
 
         If selection.StartLineNumber <> selection.EndLineNumber Then
             args &= $"&lineEnd={selection.EndLineNumber}"
