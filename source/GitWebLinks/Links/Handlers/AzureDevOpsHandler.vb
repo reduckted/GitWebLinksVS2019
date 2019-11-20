@@ -6,7 +6,7 @@ Public Class AzureDevOpsHandler
     Inherits LinkHandlerBase
 
 
-    Private Shared ReadOnly HttpsPattern As New Regex("^https:\/\/(.+@)?dev.azure.com\/(?<username>[^\/]+)\/(?<project>[^\/]+)\/_git\/.+$")
+    Private Shared ReadOnly HttpsPattern As New Regex("^https:\/\/(.+@)?dev\.azure\.com\/(?<username>[^\/]+)\/(?<project>[^\/]+)\/_git\/.+$")
     Private Shared ReadOnly SshPattern As New Regex("^git@ssh\.dev\.azure\.com:v3\/(?<username>[^\/]+)\/(?<project>[^\/]+)\/.+$")
 
 
