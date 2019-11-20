@@ -167,7 +167,7 @@ Public Class GitHubHandlerTests
 
                 Assert.Equal(
                     "https://github.com/dotnet/corefx/blob/master/src/System.IO.FileSystem/src/System/IO/Directory.cs#L38",
-                    handler.MakeUrl(info, fileName, New LineSelection(38, 38))
+                    handler.MakeUrl(info, fileName, New LineSelection(38, 38, 1, 1))
                 )
             End Using
         End Function
@@ -190,7 +190,7 @@ Public Class GitHubHandlerTests
 
                 Assert.Equal(
                     "https://github.com/dotnet/corefx/blob/master/src/System.IO.FileSystem/src/System/IO/Directory.cs#L38-L49",
-                    handler.MakeUrl(info, fileName, New LineSelection(38, 49))
+                    handler.MakeUrl(info, fileName, New LineSelection(38, 49, 1, 1))
                 )
             End Using
         End Function

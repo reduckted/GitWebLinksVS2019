@@ -44,7 +44,13 @@ Public Class CopyLinkToCurrentFileCommand
                 End If
 
                 If textSelection IsNot Nothing Then
-                    lineSelection = New LineSelection(textSelection.TopLine, textSelection.BottomLine)
+                    lineSelection = New LineSelection(
+                        textSelection.TopLine,
+                        textSelection.BottomLine,
+                        textSelection.TopPoint.DisplayColumn,
+                        textSelection.BottomPoint.DisplayColumn
+                    )
+
                 Else
                     lineSelection = Nothing
                 End If

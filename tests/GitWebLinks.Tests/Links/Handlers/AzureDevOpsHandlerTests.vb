@@ -84,8 +84,8 @@ Public Class AzureDevOpsHandlerTests
                 End Using
 
                 Assert.Equal(
-                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Fsub%20dir%2Ffile.cs&version=GBmaster&line=2",
-                    handler.MakeUrl(info, fileName, New LineSelection(2, 2))
+                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Fsub%20dir%2Ffile.cs&version=GBmaster",
+                    handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
         End Function
@@ -93,7 +93,7 @@ Public Class AzureDevOpsHandlerTests
 
         <Theory()>
         <MemberData(NameOf(GetRemotes), MemberType:=GetType(AzureDevOpsHandlerTests))>
-        Public Async Function CreatesCorrectLinkWithSingleLineSelection(remote As String) As Threading.Tasks.Task
+        Public Async Function CreatesCorrectLinkWithSingleLineSelectionWithNoWidth(remote As String) As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As AzureDevOpsHandler
                 Dim info As GitInfo
@@ -108,8 +108,32 @@ Public Class AzureDevOpsHandlerTests
                 End Using
 
                 Assert.Equal(
-                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster&line=2",
-                    handler.MakeUrl(info, fileName, New LineSelection(2, 2))
+                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster&line=2&lineEnd=3&lineStartColumn=1&lineEndColumn=1",
+                    handler.MakeUrl(info, fileName, New LineSelection(2, 2, 2, 2))
+                )
+            End Using
+        End Function
+
+
+        <Theory()>
+        <MemberData(NameOf(GetRemotes), MemberType:=GetType(AzureDevOpsHandlerTests))>
+        Public Async Function CreatesCorrectLinkWithSingleLineSelectionWithNonZeroWidth(remote As String) As Threading.Tasks.Task
+            Using dir As New TempDirectory
+                Dim handler As AzureDevOpsHandler
+                Dim info As GitInfo
+                Dim fileName As String
+
+
+                info = New GitInfo(dir.FullPath, remote)
+                fileName = Path.Combine(dir.FullPath, "src\file.cs")
+                handler = Await CreateHandlerAsync()
+
+                Using LinkHandlerHelpers.InitializeRepository(dir.FullPath)
+                End Using
+
+                Assert.Equal(
+                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster&line=2&lineEnd=5&lineStartColumn=6&lineEndColumn=9",
+                    handler.MakeUrl(info, fileName, New LineSelection(2, 5, 6, 9))
                 )
             End Using
         End Function
@@ -132,8 +156,8 @@ Public Class AzureDevOpsHandlerTests
                 End Using
 
                 Assert.Equal(
-                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster&line=1&lineEnd=3",
-                    handler.MakeUrl(info, fileName, New LineSelection(1, 3))
+                    "https://dev.azure.com/user/MyProject/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster&line=1&lineEnd=3&lineStartColumn=6&lineEndColumn=11",
+                    handler.MakeUrl(info, fileName, New LineSelection(1, 3, 6, 11))
                 )
             End Using
         End Function
