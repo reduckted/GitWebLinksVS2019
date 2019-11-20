@@ -108,7 +108,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 Assert.Equal(
                     "https://foo.visualstudio.com/_git/MyRepo?path=%2Fsrc%2Fsub%20dir%2Ffile.cs&version=GBmaster&line=2",
-                    handler.MakeUrl(info, fileName, New LineSelection(2, 2))
+                    handler.MakeUrl(info, fileName, New LineSelection(2, 2, 1, 1))
                 )
             End Using
         End Function
@@ -131,7 +131,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 Assert.Equal(
                     "https://foo.visualstudio.com/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster&line=2",
-                    handler.MakeUrl(info, fileName, New LineSelection(2, 2))
+                    handler.MakeUrl(info, fileName, New LineSelection(2, 2, 1, 1))
                 )
             End Using
         End Function
@@ -154,7 +154,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
                 Assert.Equal(
                     "https://foo.visualstudio.com/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster&line=1&lineEnd=3",
-                    handler.MakeUrl(info, fileName, New LineSelection(1, 3))
+                    handler.MakeUrl(info, fileName, New LineSelection(1, 3, 0, 0))
                 )
             End Using
         End Function

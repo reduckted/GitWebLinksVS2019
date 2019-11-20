@@ -159,7 +159,7 @@ Public Class BitbucketServerHandlerTests
 
                 Assert.Equal(
                     "https://local-bitbucket:7990/context/projects/bb/repos/my-code/browse/lib/server/main.cs?at=refs%2Fheads%2Fmaster#2",
-                    handler.MakeUrl(info, fileName, New LineSelection(2, 2))
+                    handler.MakeUrl(info, fileName, New LineSelection(2, 2, 1, 1))
                 )
             End Using
         End Function
@@ -182,7 +182,7 @@ Public Class BitbucketServerHandlerTests
 
                 Assert.Equal(
                     "https://local-bitbucket:7990/context/projects/bb/repos/my-code/browse/lib/server/main.cs?at=refs%2Fheads%2Fmaster#10-23",
-                    handler.MakeUrl(info, fileName, New LineSelection(10, 23))
+                    handler.MakeUrl(info, fileName, New LineSelection(10, 23, 1, 1))
                 )
             End Using
         End Function

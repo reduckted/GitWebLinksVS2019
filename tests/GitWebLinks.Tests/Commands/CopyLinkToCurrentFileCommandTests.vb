@@ -105,7 +105,7 @@ Public Class CopyLinkToCurrentFileCommandTests
 
 
             dte = MockDte(
-                selection:=New LineSelection(3, 3)
+                selection:=New LineSelection(3, 3, 1, 1)
             )
 
             handler = New Mock(Of ILinkHandler)
@@ -135,7 +135,7 @@ Public Class CopyLinkToCurrentFileCommandTests
 
 
             dte = MockDte(
-                selection:=New LineSelection(3, 4)
+                selection:=New LineSelection(3, 4, 1, 1)
             )
 
             handler = New Mock(Of ILinkHandler)
@@ -205,7 +205,7 @@ Public Class CopyLinkToCurrentFileCommandTests
 
             dte = MockDte(
                 activeFileName:="Z:\foo\bar.txt",
-                selection:=New LineSelection(34, 34)
+                selection:=New LineSelection(34, 34, 1, 1)
             )
 
             gitInfo = New GitInfo("a", "b")
@@ -243,16 +243,26 @@ Public Class CopyLinkToCurrentFileCommandTests
 
             dte = MockDte(
                 activeFileName:="Z:\foo\bar.txt",
-                selection:=New LineSelection(21, 38)
+                selection:=New LineSelection(21, 38, 15, 29)
             )
 
             gitInfo = New GitInfo("a", "b")
 
             handler = New Mock(Of ILinkHandler)
 
-            handler.Setup(
-                Function(x) x.MakeUrl(gitInfo, "Z:\foo\bar.txt", It.Is(Function(s As LineSelection) s.StartLineNumber = 21 AndAlso s.EndLineNumber = 38))
-            ).Returns("http://foo.bar")
+            handler _
+                .Setup(Function(x) x.MakeUrl(
+                    gitInfo,
+                    "Z:\foo\bar.txt",
+                    It.Is(
+                        Function(s As LineSelection) _
+                            s.StartLineNumber = 21 AndAlso
+                            s.EndLineNumber = 38 AndAlso
+                            s.StartColumnNumber = 15 AndAlso
+                            s.EndColumnNumber = 29
+                    )
+                )) _
+                .Returns("http://foo.bar")
 
             linkInfo = New LinkInfo(gitInfo, handler.Object)
 
@@ -314,15 +324,25 @@ Public Class CopyLinkToCurrentFileCommandTests
         Dim dte2 As Mock(Of DTE2)
         Dim activeDocument As Mock(Of Document)
         Dim textSelection As Mock(Of TextSelection)
+        Dim topPoint As Mock(Of VirtualPoint)
+        Dim bottomPoint As Mock(Of VirtualPoint)
 
 
         If selection Is Nothing Then
-            selection = New LineSelection(1, 1)
+            selection = New LineSelection(1, 1, 1, 1)
         End If
+
+        topPoint = New Mock(Of VirtualPoint)
+        topPoint.Setup(Function(x) x.DisplayColumn).Returns(selection.StartColumnNumber)
+
+        bottomPoint = New Mock(Of VirtualPoint)
+        bottomPoint.Setup(Function(x) x.DisplayColumn).Returns(selection.EndColumnNumber)
 
         textSelection = New Mock(Of TextSelection)
         textSelection.SetupGet(Function(x) x.TopLine).Returns(selection.StartLineNumber)
         textSelection.SetupGet(Function(x) x.BottomLine).Returns(selection.EndLineNumber)
+        textSelection.SetupGet(Function(x) x.TopPoint).Returns(topPoint.Object)
+        textSelection.SetupGet(Function(x) x.BottomPoint).Returns(bottomPoint.Object)
 
         activeDocument = New Mock(Of Document)
         activeDocument.SetupGet(Function(x) x.FullName).Returns(activeFileName)
