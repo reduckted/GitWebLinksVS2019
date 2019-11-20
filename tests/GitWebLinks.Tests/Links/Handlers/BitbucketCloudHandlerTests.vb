@@ -107,7 +107,7 @@ Public Class BitbucketCloudHandlerTests
 
                 Assert.Equal(
                     "https://bitbucket.org/atlassian/atlassian-bamboo_rest/src/master/lib/puppet/feature/restclient.rb#restclient.rb-2",
-                    handler.MakeUrl(info, fileName, New LineSelection(2, 2, 1, 1))
+                    handler.MakeUrl(info, fileName, New LineSelection(2, 2))
                 )
             End Using
         End Function
@@ -130,7 +130,7 @@ Public Class BitbucketCloudHandlerTests
 
                 Assert.Equal(
                     "https://bitbucket.org/atlassian/atlassian-bamboo_rest/src/master/lib/puppet/feature/restclient.rb#restclient.rb-1:3",
-                    handler.MakeUrl(info, fileName, New LineSelection(1, 3, 1, 1))
+                    handler.MakeUrl(info, fileName, New LineSelection(1, 3))
                 )
             End Using
         End Function

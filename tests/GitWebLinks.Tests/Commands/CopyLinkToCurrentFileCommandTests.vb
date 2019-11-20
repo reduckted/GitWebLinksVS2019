@@ -105,7 +105,7 @@ Public Class CopyLinkToCurrentFileCommandTests
 
 
             dte = MockDte(
-                selection:=New LineSelection(3, 3, 3, 3)
+                selection:=New LineSelection(3, 3)
             )
 
             handler = New Mock(Of ILinkHandler)
@@ -135,7 +135,7 @@ Public Class CopyLinkToCurrentFileCommandTests
 
 
             dte = MockDte(
-                selection:=New LineSelection(3, 4, 3, 3)
+                selection:=New LineSelection(3, 4)
             )
 
             handler = New Mock(Of ILinkHandler)
@@ -205,7 +205,7 @@ Public Class CopyLinkToCurrentFileCommandTests
 
             dte = MockDte(
                 activeFileName:="Z:\foo\bar.txt",
-                selection:=New LineSelection(34, 34, 3, 3)
+                selection:=New LineSelection(34, 34)
             )
 
             gitInfo = New GitInfo("a", "b")
@@ -243,7 +243,7 @@ Public Class CopyLinkToCurrentFileCommandTests
 
             dte = MockDte(
                 activeFileName:="Z:\foo\bar.txt",
-                selection:=New LineSelection(21, 38, 3, 3)
+                selection:=New LineSelection(21, 38)
             )
 
             gitInfo = New GitInfo("a", "b")
@@ -317,7 +317,7 @@ Public Class CopyLinkToCurrentFileCommandTests
 
 
         If selection Is Nothing Then
-            selection = New LineSelection(1, 1, 1, 1)
+            selection = New LineSelection(1, 1)
         End If
 
         textSelection = New Mock(Of TextSelection)

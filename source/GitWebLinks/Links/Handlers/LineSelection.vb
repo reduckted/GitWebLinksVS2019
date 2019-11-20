@@ -3,8 +3,8 @@ Public Class LineSelection
     Public Sub New(
             startLineNumber As Integer,
             endLineNumber As Integer,
-            startColumnNumber As Integer,
-            endColumnNumber As Integer
+            Optional startColumnNumber As Integer = 0,
+            Optional endColumnNumber As Integer = 0
         )
 
         Me.StartLineNumber = startLineNumber
