@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.0
+
+-   Added debug logging.
+
 ## 1.3.1
 
 -   Fixed selection ranges in Azure DevOps.
