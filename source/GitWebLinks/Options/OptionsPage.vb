@@ -49,6 +49,7 @@ Public Class OptionsPage
 
         cgViewModel.UseCurrentBranch = (options.LinkType = LinkType.Branch)
         cgViewModel.UseCurrentHash = (options.LinkType = LinkType.Hash)
+        cgViewModel.EnableDebugLogging = options.EnableDebugLogging
     End Sub
 
 
@@ -62,6 +63,7 @@ Public Class OptionsPage
             options.GitHubEnterpriseUrls = FromModel(cgViewModel.GitHubEnterpriseUrls)
             options.BitbucketServerUrls = FromModel(cgViewModel.BitbucketServerUrls)
             options.LinkType = If(cgViewModel.UseCurrentBranch, LinkType.Branch, LinkType.Hash)
+            options.EnableDebugLogging = cgViewModel.EnableDebugLogging
 
             options.Save()
         End If

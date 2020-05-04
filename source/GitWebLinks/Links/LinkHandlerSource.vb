@@ -13,6 +13,7 @@ Public Class LinkHandlerSource
         Implements IAsyncInitializable.InitializeAsync
 
         Dim types As IEnumerable(Of Type)
+        Dim logger As ILogger
 
 
         types = (
@@ -35,6 +36,14 @@ Public Class LinkHandlerSource
 
             cgHandlers.Add(handler)
         Next type
+
+        logger = Await provider.GetServiceAsync(Of ILogger)
+
+        logger.Log("Available link handlers:")
+
+        For Each handler In cgHandlers
+            logger.Log($" * {handler.Name}")
+        Next handler
     End Function
 
 

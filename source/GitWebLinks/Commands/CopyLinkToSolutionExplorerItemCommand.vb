@@ -7,6 +7,9 @@ Public Class CopyLinkToSolutionExplorerItemCommand
     Inherits CommandBase
 
 
+    Private Const Name As String = "Copy Link to Solution Explorer Item"
+
+
     Protected Overrides Iterator Function GetCommandIDs() As IEnumerable(Of CommandID)
         Yield Commands.CopyLinkToSolutionExplorerItem
     End Function
@@ -14,31 +17,38 @@ Public Class CopyLinkToSolutionExplorerItemCommand
 
     Protected Overrides Sub BeforeQueryStatus(command As OleMenuCommand)
         If (LinkInfo IsNot Nothing) AndAlso (Not String.IsNullOrEmpty(GetSelectedFilePath())) Then
+            Logger.Log($"Command '{Name}' is enabled with handler '{LinkInfo.Handler.Name}'.")
             command.Visible = True
             command.Text = $"Copy Link to {LinkInfo.Handler.Name}"
 
         Else
+            Logger.Log($"Command '{Name}' is disabled.")
             command.Visible = False
         End If
     End Sub
 
 
     Protected Overrides Sub Invoke(id As CommandID)
-        If LinkInfo IsNot Nothing Then
-            Dim filePath As String
+        Try
+            If LinkInfo IsNot Nothing Then
+                Dim filePath As String
 
 
-            filePath = GetSelectedFilePath()
+                filePath = GetSelectedFilePath()
 
-            If Not String.IsNullOrEmpty(filePath) Then
-                Dim url As String
+                If Not String.IsNullOrEmpty(filePath) Then
+                    Dim url As String
 
 
-                url = LinkInfo.Handler.MakeUrl(LinkInfo.GitInfo, filePath, Nothing)
+                    url = LinkInfo.Handler.MakeUrl(LinkInfo.GitInfo, filePath, Nothing)
 
-                SetClipboardText(url)
+                    SetClipboardText(url)
+                End If
             End If
-        End If
+
+        Catch ex As Exception
+            Logger.Log($"Exception occurred when invoking command '{Name}': {ex}")
+        End Try
     End Sub
 
 

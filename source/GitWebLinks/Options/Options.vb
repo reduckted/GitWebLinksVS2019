@@ -12,6 +12,7 @@ Public Class Options
     Private Const GitHubEnterpriseServersProperty As String = "GitHubEnterpriseServers"
     Private Const BitbucketServerServersProperty As String = "BitbucketServerServers"
     Private Const LinkTypeProperty As String = "LinkType"
+    Private Const EnableDebugLoggingProperty As String = "EnableDebugLogging"
 
 
     Private Shared ReadOnly DefaultGitHubEnterpriseServers() As ServerUrl = {
@@ -75,6 +76,10 @@ Public Class Options
         Implements IOptions.LinkType
 
 
+    Public Property EnableDebugLogging As Boolean _
+        Implements IOptions.EnableDebugLogging
+
+
     Private Sub LoadSettings()
         Try
             If cgSettingsManager.Contains(GitHubEnterpriseServersProperty) Then
@@ -94,6 +99,15 @@ Public Class Options
                 End If
             End If
 
+            If cgSettingsManager.Contains(EnableDebugLoggingProperty) Then
+                Dim value As Integer
+
+
+                If Integer.TryParse(cgSettingsManager.GetString(EnableDebugLoggingProperty), value) Then
+                    EnableDebugLogging = value <> 0
+                End If
+            End If
+
         Catch ex As Exception
             Diagnostics.Debug.WriteLine(ex.Message)
         End Try
@@ -107,6 +121,7 @@ Public Class Options
             cgSettingsManager.SetString(GitHubEnterpriseServersProperty, EncodeServers(cgGitHubEnterpriseServers))
             cgSettingsManager.SetString(BitbucketServerServersProperty, EncodeServers(cgBitbucketServerServers))
             cgSettingsManager.SetString(LinkTypeProperty, CInt(LinkType).ToString())
+            cgSettingsManager.SetString(EnableDebugLoggingProperty, If(EnableDebugLogging, 1, 0).ToString())
 
         Catch ex As Exception
             Diagnostics.Debug.WriteLine(ex.Message)

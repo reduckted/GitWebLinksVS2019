@@ -8,6 +8,11 @@ Public Class TestAsyncServiceProvider
     Private ReadOnly cgServices As New Dictionary(Of Type, Object)
 
 
+    Public Sub New()
+        cgServices.Add(GetType(ILogger), Mock.Of(Of ILogger))
+    End Sub
+
+
     Public Overloads Sub AddService(Of T)(instance As T)
         cgServices(GetType(T)) = instance
     End Sub

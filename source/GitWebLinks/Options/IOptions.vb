@@ -9,6 +9,9 @@ Public Interface IOptions
     Property LinkType As LinkType
 
 
+    Property EnableDebugLogging As Boolean
+
+
     Sub Save()
 
 End Interface

@@ -32,6 +32,7 @@ Public NotInheritable Class CopyLinkCommandPackage
         AddService(Of ILinkInfoFinder, LinkInfoFinder)()
         AddService(Of IGitInfoFinder, GitInfoFinder)()
         AddService(Of ILinkHandlerSource, LinkHandlerSource)()
+        AddService(Of ILogger, Logger)()
 
         Await JoinableTaskFactory.SwitchToMainThreadAsync()
 

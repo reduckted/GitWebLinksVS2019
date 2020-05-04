@@ -1,5 +1,6 @@
 Imports System.Collections.ObjectModel
 Imports System.ComponentModel
+Imports System.Runtime.CompilerServices
 
 
 Public Class OptionsPageControlViewModel
@@ -8,6 +9,7 @@ Public Class OptionsPageControlViewModel
 
     Private cgUseCurrentHash As Boolean
     Private cgUseCurrentBranch As Boolean
+    Private cgEnableDebugLogging As Boolean
 
 
     Public Sub New()
@@ -24,7 +26,7 @@ Public Class OptionsPageControlViewModel
         Set
             If cgUseCurrentHash <> Value Then
                 cgUseCurrentHash = Value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(UseCurrentHash)))
+                RaisePropertyChanged()
             End If
         End Set
     End Property
@@ -38,7 +40,21 @@ Public Class OptionsPageControlViewModel
         Set
             If cgUseCurrentBranch <> Value Then
                 cgUseCurrentBranch = Value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(NameOf(UseCurrentBranch)))
+                RaisePropertyChanged()
+            End If
+        End Set
+    End Property
+
+
+    Public Property EnableDebugLogging As Boolean
+        Get
+            Return cgEnableDebugLogging
+        End Get
+
+        Set
+            If cgEnableDebugLogging <> Value Then
+                cgEnableDebugLogging = Value
+                RaisePropertyChanged()
             End If
         End Set
     End Property
@@ -48,6 +64,11 @@ Public Class OptionsPageControlViewModel
 
 
     Public ReadOnly Property BitbucketServerUrls As ObservableCollection(Of ServerUrlModel)
+
+
+    Private Sub RaisePropertyChanged(<CallerMemberName()> Optional propertyName As String = Nothing)
+        RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
+    End Sub
 
 
     Public Event PropertyChanged As PropertyChangedEventHandler _

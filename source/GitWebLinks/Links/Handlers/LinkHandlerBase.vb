@@ -17,18 +17,27 @@ Public MustInherit Class LinkHandlerBase
 
 
     Private cgOptions As IOptions
+    Private cgLogger As ILogger
 
 
     Public Async Function InitializeAsync(provider As IAsyncServiceProvider) As Threading.Tasks.Task _
         Implements IAsyncInitializable.InitializeAsync
 
         cgOptions = Await provider.GetServiceAsync(Of IOptions)
+        cgLogger = Await provider.GetServiceAsync(Of ILogger)
     End Function
 
 
     Protected ReadOnly Property Options As IOptions
         Get
             Return cgOptions
+        End Get
+    End Property
+
+
+    Protected ReadOnly Property Logger As ILogger
+        Get
+            Return cgLogger
         End Get
     End Property
 
@@ -40,7 +49,18 @@ Public MustInherit Class LinkHandlerBase
     Public Function IsMatch(remoteUrl As String) As Boolean _
         Implements ILinkHandler.IsMatch
 
-        Return GetMatchingServerUrl(FixRemoteUrl(remoteUrl)) IsNot Nothing
+        Dim matches As Boolean
+
+
+        matches = GetMatchingServerUrl(FixRemoteUrl(remoteUrl)) IsNot Nothing
+
+        If matches Then
+            Logger.Log($"Remote URL '{remoteUrl}' is a match for {Name}.")
+        Else
+            Logger.Log($"Remote URL '{remoteUrl}' is not match for {Name}.")
+        End If
+
+        Return matches
     End Function
 
 
@@ -100,6 +120,8 @@ Public MustInherit Class LinkHandlerBase
             url &= GetSelectionHash(filePath, selection)
         End If
 
+        Logger.Log($"URL for {Name} is '{url}'")
+
         Return url
     End Function
 
@@ -108,7 +130,7 @@ Public MustInherit Class LinkHandlerBase
         Dim dir As DirectoryInfo
 
 
-        ' Adpated from: https://stackoverflow.com/a/326153/4397397
+        ' Adapted from: https://stackoverflow.com/a/326153/4397397
 
         If (Not File.Exists(filePath)) AndAlso (Not Directory.Exists(filePath)) Then
             Return filePath

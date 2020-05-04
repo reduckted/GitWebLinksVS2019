@@ -7,26 +7,26 @@ Public Class GitInfoFinderTests
     Public Class FindMethod
 
         <Fact()>
-        Public Sub ReturnsNullWhenNoGitRepositoryFound()
+        Public Async Function ReturnsNullWhenNoGitRepositoryFound() As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim finder As GitInfoFinder
 
 
-                finder = New GitInfoFinder
+                finder = Await CreateFinder()
 
                 Assert.Null(finder.Find(dir.FullPath))
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub FindsGitRootWhenSolutionIsAtRootOfGitRepository()
+        Public Async Function FindsGitRootWhenSolutionIsAtRootOfGitRepository() As Threading.Tasks.Task
             Using temp As New TempDirectory
                 Dim finder As GitInfoFinder
                 Dim info As GitInfo
 
 
-                finder = New GitInfoFinder
+                finder = Await CreateFinder()
 
                 Using repo = InitializeRepository(temp.FullPath)
                     repo.Network.Remotes.Add("foo", "bar")
@@ -37,18 +37,18 @@ Public Class GitInfoFinderTests
                 Assert.NotNull(info)
                 Assert.Equal(temp.FullPath, info.RootDirectory)
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub FindsGitRootWhenSolutionIsUnderneathGitRepository()
+        Public Async Function FindsGitRootWhenSolutionIsUnderneathGitRepository() As Threading.Tasks.Task
             Using temp As New TempDirectory
                 Dim finder As GitInfoFinder
                 Dim info As GitInfo
                 Dim grandchild As String
 
 
-                finder = New GitInfoFinder
+                finder = Await CreateFinder()
 
                 Using repo = InitializeRepository(temp.FullPath)
                     repo.Network.Remotes.Add("bar", "meep")
@@ -62,17 +62,17 @@ Public Class GitInfoFinderTests
                 Assert.NotNull(info)
                 Assert.Equal(temp.FullPath, info.RootDirectory)
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub ReturnsNullWhenNoGitRemoteFound()
+        Public Async Function ReturnsNullWhenNoGitRemoteFound() As Threading.Tasks.Task
             Using temp As New TempDirectory
                 Dim finder As GitInfoFinder
                 Dim info As GitInfo
 
 
-                finder = New GitInfoFinder
+                finder = Await CreateFinder()
 
                 Using repo = InitializeRepository(temp.FullPath)
                 End Using
@@ -81,16 +81,16 @@ Public Class GitInfoFinderTests
 
                 Assert.Null(info)
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub UsesOriginRemoteIfItExists()
+        Public Async Function UsesOriginRemoteIfItExists() As Threading.Tasks.Task
             Dim finder As GitInfoFinder
             Dim info As GitInfo
 
 
-            finder = New GitInfoFinder
+            finder = Await CreateFinder()
 
             Using temp As New TempDirectory
                 Using repo = InitializeRepository(temp.FullPath)
@@ -102,16 +102,16 @@ Public Class GitInfoFinderTests
 
                 Assert.Equal("bar", info.RemoteUrl)
             End Using
-        End Sub
+        End Function
 
 
         <Fact()>
-        Public Sub UsesFirstRemoteAlphabeticallyIfNoOriginRemote()
+        Public Async Function UsesFirstRemoteAlphabeticallyIfNoOriginRemote() As Threading.Tasks.Task
             Dim finder As GitInfoFinder
             Dim info As GitInfo
 
 
-            finder = New GitInfoFinder
+            finder = Await CreateFinder()
 
             Using temp As New TempDirectory
                 Using repo = InitializeRepository(temp.FullPath)
@@ -124,7 +124,7 @@ Public Class GitInfoFinderTests
 
                 Assert.Equal("bar", info.RemoteUrl)
             End Using
-        End Sub
+        End Function
 
 
         Private Shared Function InitializeRepository(dir As String) As Repository
@@ -150,6 +150,17 @@ Public Class GitInfoFinderTests
             End Try
 
             Return repository
+        End Function
+
+
+        Private Shared Async Function CreateFinder() As Threading.Tasks.Task(Of GitInfoFinder)
+            Dim finder As GitInfoFinder
+
+
+            finder = New GitInfoFinder
+            Await finder.InitializeAsync(New TestAsyncServiceProvider)
+
+            Return finder
         End Function
 
     End Class

@@ -11,6 +11,7 @@ Public MustInherit Class CommandBase
     Private cgClipboard As IClipboard
     Private cgLinkInfoProvider As ILinkInfoProvider
     Private cgDte As DTE2
+    Private cgLogger As ILogger
 
 
     Public Async Function InitializeAsync(provider As IAsyncServiceProvider) As Threading.Tasks.Task _
@@ -22,6 +23,7 @@ Public MustInherit Class CommandBase
         cgClipboard = Await provider.GetServiceAsync(Of IClipboard)
         cgLinkInfoProvider = Await provider.GetServiceAsync(Of ILinkInfoProvider)
         cgDte = DirectCast(Await provider.GetServiceAsync(Of DTE), DTE2)
+        cgLogger = Await provider.GetServiceAsync(Of ILogger)
 
         commandService = Await provider.GetServiceAsync(Of IMenuCommandService)
 
@@ -29,6 +31,13 @@ Public MustInherit Class CommandBase
             AddCommand(commandService, id)
         Next id
     End Function
+
+
+    Protected ReadOnly Property Logger As ILogger
+        Get
+            Return cgLogger
+        End Get
+    End Property
 
 
     Private Sub AddCommand(
@@ -70,6 +79,7 @@ Public MustInherit Class CommandBase
 
 
     Protected Sub SetClipboardText(text As String)
+        Logger.Log($"Setting clipboard text to '{text}'.")
         cgClipboard.SetText(text)
     End Sub
 
