@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.1
+
+-   Handled VSTS repositories in sub-directories.
+
 ## 1.4.0
 
 -   Added debug logging.
