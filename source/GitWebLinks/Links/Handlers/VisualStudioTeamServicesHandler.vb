@@ -6,8 +6,8 @@ Public Class VisualStudioTeamServicesHandler
     Inherits LinkHandlerBase
 
 
-    Private Shared ReadOnly HttpsPattern As New Regex("^https:\/\/(?<username>[^.]+)\.visualstudio\.com(?:\/(?<collection>[^\/]+))?\/_git\/.+$")
-    Private Shared ReadOnly SshPattern As New Regex("^(?<username>[^.]+)@vs-ssh\.visualstudio\.com:22(?:\/(?<collection>[^\/]+))?/_ssh/.+$")
+    Private Shared ReadOnly HttpsPattern As New Regex("^https:\/\/(?<username>[^.]+)\.visualstudio\.com(?:\/(?<collection>.+))?\/_git\/.+$")
+    Private Shared ReadOnly SshPattern As New Regex("^(?<username>[^.]+)@vs-ssh\.visualstudio\.com:22(?:\/(?<collection>.+))?/_ssh/.+$")
 
 
     Public Overrides ReadOnly Property Name As String

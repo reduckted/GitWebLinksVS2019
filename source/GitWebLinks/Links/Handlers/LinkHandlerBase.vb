@@ -57,7 +57,7 @@ Public MustInherit Class LinkHandlerBase
         If matches Then
             Logger.Log($"Remote URL '{remoteUrl}' is a match for {Name}.")
         Else
-            Logger.Log($"Remote URL '{remoteUrl}' is not match for {Name}.")
+            Logger.Log($"Remote URL '{remoteUrl}' is not a match for {Name}.")
         End If
 
         Return matches

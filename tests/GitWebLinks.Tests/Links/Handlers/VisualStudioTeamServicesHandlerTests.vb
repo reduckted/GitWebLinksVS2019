@@ -69,7 +69,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
         <Theory()>
         <MemberData(NameOf(GetCollectionRemotes), MemberType:=GetType(VisualStudioTeamServicesHandlerTests))>
-        Public Async Function CreatesCorrectLinkFromRemoteUrlWithCollection(remote As String) As Threading.Tasks.Task
+        Public Async Function CreatesCorrectLinkFromRemoteUrlWithCollection(remote As String, collectionName As String) As Threading.Tasks.Task
             Using dir As New TempDirectory
                 Dim handler As VisualStudioTeamServicesHandler
                 Dim info As GitInfo
@@ -84,7 +84,7 @@ Public Class VisualStudioTeamServicesHandlerTests
                 End Using
 
                 Assert.Equal(
-                    "https://foo.visualstudio.com/DefaultCollection/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster",
+                    $"https://foo.visualstudio.com/{collectionName}/_git/MyRepo?path=%2Fsrc%2Ffile.cs&version=GBmaster",
                     handler.MakeUrl(info, fileName, Nothing)
                 )
             End Using
@@ -212,7 +212,7 @@ Public Class VisualStudioTeamServicesHandlerTests
 
 
     Public Shared Function GetRemotes() As IEnumerable(Of Object())
-        Return GetNonCollectionRemotes().Concat(GetCollectionRemotes())
+        Return GetNonCollectionRemotes().Concat(GetCollectionRemotes().Select(Function(x) New Object() {x(0)}))
     End Function
 
 
@@ -223,8 +223,10 @@ Public Class VisualStudioTeamServicesHandlerTests
 
 
     Public Shared Iterator Function GetCollectionRemotes() As IEnumerable(Of Object())
-        Yield {"https://foo.visualstudio.com/DefaultCollection/_git/MyRepo"}
-        Yield {"ssh://foo@vs-ssh.visualstudio.com:22/DefaultCollection/_ssh/MyRepo"}
+        Yield {"https://foo.visualstudio.com/DefaultCollection/_git/MyRepo", "DefaultCollection"}
+        Yield {"https://foo.visualstudio.com/DefaultCollection/Child/_git/MyRepo", "DefaultCollection/Child"}
+        Yield {"ssh://foo@vs-ssh.visualstudio.com:22/DefaultCollection/_ssh/MyRepo", "DefaultCollection"}
+        Yield {"ssh://foo@vs-ssh.visualstudio.com:22/DefaultCollection/Child/_ssh/MyRepo", "DefaultCollection/Child"}
     End Function
 
 
