@@ -134,6 +134,7 @@ Public Class Options
             <servers>
                 <%=
                     From server In servers
+                    Where Not String.IsNullOrEmpty(server.BaseUrl) Or Not String.IsNullOrEmpty(server.SshUrl)
                     Select <server base=<%= server.BaseUrl %> ssh=<%= server.SshUrl %>/>
                 %>
             </servers>

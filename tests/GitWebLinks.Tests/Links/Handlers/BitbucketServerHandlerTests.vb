@@ -8,7 +8,7 @@ Public Class BitbucketServerHandlerTests
 
         <Fact()>
         Public Async Function ReturnsBitbucket() As Threading.Tasks.Task
-            Assert.Equal("Bitbucket", (Await CreateHandlerAsync()).Name)
+            Assert.Equal("Bitbucket Server", (Await CreateHandlerAsync()).Name)
         End Function
 
     End Class
@@ -25,6 +25,26 @@ Public Class BitbucketServerHandlerTests
             handler = Await CreateHandlerAsync({New ServerUrl("https://local-bitbucket:7990/context", "git@local-bitbucket:7999")})
 
             Assert.True(handler.IsMatch(remote))
+        End Function
+
+        <Fact()>
+        Public Async Function MatchServerUrlsNotInSettingsEmptySsh() As Threading.Tasks.Task
+            Dim handler As BitbucketServerHandler
+
+
+            handler = Await CreateHandlerAsync({New ServerUrl("https://local-bitbucket:7990/context", Nothing)})
+
+            Assert.True(handler.IsMatch(GetHttpsRemoteUrl()))
+        End Function
+
+        <Fact()>
+        Public Async Function MatchServerUrlsNotInSettingsEmptyBaseUrl() As Threading.Tasks.Task
+            Dim handler As BitbucketServerHandler
+
+
+            handler = Await CreateHandlerAsync({New ServerUrl(Nothing, "git@local-bitbucket:7999")})
+
+            Assert.True(handler.IsMatch(GetGitRemoteUrl()))
         End Function
 
 

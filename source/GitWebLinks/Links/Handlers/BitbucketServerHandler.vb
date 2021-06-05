@@ -11,7 +11,7 @@ Public Class BitbucketServerHandler
 
     Public Overrides ReadOnly Property Name As String
         Get
-            Return "Bitbucket"
+            Return "Bitbucket Server"
         End Get
     End Property
 

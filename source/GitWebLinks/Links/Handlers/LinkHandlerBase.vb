@@ -159,8 +159,8 @@ Public MustInherit Class LinkHandlerBase
 
         Return (
             From server In GetServerUrls()
-            Where remoteUrl.StartsWith(server.BaseUrl, StringComparison.Ordinal) _
-            OrElse remoteUrl.StartsWith(server.SshUrl, StringComparison.Ordinal)
+            Where (Not String.IsNullOrEmpty(server.BaseUrl) AndAlso remoteUrl.StartsWith(server.BaseUrl, StringComparison.Ordinal)) _
+            OrElse (Not String.IsNullOrEmpty(server.SshUrl) AndAlso remoteUrl.StartsWith(server.SshUrl, StringComparison.Ordinal))
         ).FirstOrDefault()
     End Function
 
