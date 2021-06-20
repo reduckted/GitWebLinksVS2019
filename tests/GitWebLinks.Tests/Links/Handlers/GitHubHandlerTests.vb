@@ -41,6 +41,26 @@ Public Class GitHubHandlerTests
             Assert.True(handler.IsMatch(remote))
         End Function
 
+        <Fact()>
+        Public Async Function MatchServerUrlsNotInSettingsEmptySsh() As Threading.Tasks.Task
+            Dim handler As GitHubHandler
+
+
+            handler = Await CreateHandlerAsync({New ServerUrl("https://local-github", Nothing)})
+
+            Assert.True(handler.IsMatch("https://local-github/dotnet/corefx.git"))
+        End Function
+
+        <Fact()>
+        Public Async Function MatchServerUrlsNotInSettingsEmptyBaseUrl() As Threading.Tasks.Task
+            Dim handler As GitHubHandler
+
+
+            handler = Await CreateHandlerAsync({New ServerUrl(Nothing, "git@local-github")})
+
+            Assert.True(handler.IsMatch("ssh://git@local-github:dotnet/corefx.git"))
+        End Function
+
 
         <Fact()>
         Public Async Function DoesNotMatchServerUrlsNotInSettings() As Threading.Tasks.Task

@@ -167,6 +167,7 @@
     <Compile Include="Links\Handlers\GitHubHandlerTests.vb" />
     <Compile Include="Links\Handlers\LinkHandlerHelpers.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="Options\OptionsTests.vb" />
     <Compile Include="Test Helpers\TempDirectory.vb" />
     <Compile Include="Test Helpers\TestAsyncServiceProvider.vb" />
   </ItemGroup>
