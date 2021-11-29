@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <ItemGroup>
+        <Content Include="$(USERPROFILE)\.nuget\packages\libgit2sharp.nativebinaries\1.0.185\runtimes\win7-x64\native\git2-15e1193.dll">
+            <Link>lib\win32\x64\git2-15e1193.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <None Include="$(USERPROFILE)\.nuget\packages\libgit2sharp.nativebinaries\1.0.185\libgit2\LibGit2Sharp.dll.config">
+            <Link>LibGit2Sharp.dll.config</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <IncludeInVSIX>true</IncludeInVSIX>
+        </None>
+    </ItemGroup>
+</Project>

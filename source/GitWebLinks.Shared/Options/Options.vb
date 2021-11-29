@@ -1,6 +1,3 @@
-Imports GitWebLinks
-Imports Microsoft.VisualStudio.Shell
-Imports System.Threading.Tasks
 Imports System.Xml.Linq
 
 

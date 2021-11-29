@@ -5,7 +5,7 @@ Public Class Clipboard
     Public Sub SetText(text As String) _
         Implements IClipboard.SetText
 
-        Windows.Clipboard.SetText(text)
+        System.Windows.Clipboard.SetText(text)
     End Sub
 
 End Class

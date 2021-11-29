@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28407.52
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{D2A8E9D4-9B73-44EA-B1AC-AA43D795F3EA}"
 EndProject
@@ -13,24 +13,45 @@ Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "GitWebLinks.Tests", "tests\
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "GitWebLinks.Shared", "source\GitWebLinks.Shared\GitWebLinks.Shared.shproj", "{1CBC302A-41CE-4EFF-8C04-692B78EB7733}"
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "GitWebLinks2022", "source\GitWebLinks2022\GitWebLinks2022.vbproj", "{C1B6DABD-7BF9-43F8-9AA2-35BB33371B78}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		source\GitWebLinks.Shared\GitWebLinks.Shared.projitems*{1cbc302a-41ce-4eff-8c04-692b78eb7733}*SharedItemsImports = 13
 		source\GitWebLinks.Shared\GitWebLinks.Shared.projitems*{481763d0-aaf3-4556-8729-015be99b6ba9}*SharedItemsImports = 4
+		source\GitWebLinks.Shared\GitWebLinks.Shared.projitems*{c1b6dabd-7bf9-43f8-9aa2-35bb33371b78}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Debug|x86.ActiveCfg = Debug|x86
+		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Debug|x86.Build.0 = Debug|x86
 		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Release|x86.ActiveCfg = Release|x86
+		{481763D0-AAF3-4556-8729-015BE99B6BA9}.Release|x86.Build.0 = Release|x86
 		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Debug|x86.Build.0 = Debug|Any CPU
 		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Release|x86.ActiveCfg = Release|Any CPU
+		{7EBD78BF-535C-4094-B410-E94B7BC6D986}.Release|x86.Build.0 = Release|Any CPU
+		{C1B6DABD-7BF9-43F8-9AA2-35BB33371B78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1B6DABD-7BF9-43F8-9AA2-35BB33371B78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1B6DABD-7BF9-43F8-9AA2-35BB33371B78}.Debug|x86.ActiveCfg = Debug|x86
+		{C1B6DABD-7BF9-43F8-9AA2-35BB33371B78}.Debug|x86.Build.0 = Debug|x86
+		{C1B6DABD-7BF9-43F8-9AA2-35BB33371B78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1B6DABD-7BF9-43F8-9AA2-35BB33371B78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1B6DABD-7BF9-43F8-9AA2-35BB33371B78}.Release|x86.ActiveCfg = Release|x86
+		{C1B6DABD-7BF9-43F8-9AA2-35BB33371B78}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,6 +59,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{481763D0-AAF3-4556-8729-015BE99B6BA9} = {D2A8E9D4-9B73-44EA-B1AC-AA43D795F3EA}
 		{7EBD78BF-535C-4094-B410-E94B7BC6D986} = {1E20E79C-7D9B-4356-876A-B7988E94FF19}
+		{C1B6DABD-7BF9-43F8-9AA2-35BB33371B78} = {D2A8E9D4-9B73-44EA-B1AC-AA43D795F3EA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EC046496-3AA0-4982-B6B1-838AAA8D4960}

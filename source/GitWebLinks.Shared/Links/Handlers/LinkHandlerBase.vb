@@ -1,6 +1,4 @@
-Imports GitWebLinks
 Imports LibGit2Sharp
-Imports Microsoft.VisualStudio.Shell
 Imports System.IO
 Imports System.Text.RegularExpressions
 
