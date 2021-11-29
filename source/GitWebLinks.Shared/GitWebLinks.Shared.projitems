@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>1cbc302a-41ce-4eff-8c04-692b78eb7733</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>GitWebLinks.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\CommandBase.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\Commands.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\CopyLinkToCurrentFileCommand.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Commands\CopyLinkToSolutionExplorerItemCommand.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)CopyLinkCommandPackage.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Git\GitInfo.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Git\GitInfoFinder.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Git\IGitInfoFinder.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\Handlers\AzureDevOpsHandler.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\Handlers\BitbucketCloudHandler.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\Handlers\BitbucketServerHandler.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\Handlers\GitHubHandler.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\Handlers\ILinkHandler.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\Handlers\LineSelection.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\Handlers\LinkHandlerBase.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\Handlers\VisualStudioTeamServicesHandler.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\ILinkHandlerSource.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\ILinkInfoFinder.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\ILinkInfoProvider.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\LinkHandlerSource.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\LinkInfo.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\LinkInfoFinder.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Links\LinkInfoProvider.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\ILogger.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\Logger.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Options\IOptions.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Options\ISettingsManager.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Options\LinkType.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Options\Options.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Options\OptionsPage.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Options\OptionsPageControl.xaml.vb">
+      <DependentUpon>OptionsPageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Options\OptionsPageControlViewModel.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Options\ServerUrl.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Options\ServerUrlModel.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Options\SettingsManager.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\Clipboard.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\IAsyncInitializable.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\IAsyncServiceProvider.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\IClipboard.vb" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utilities\PackageAsyncServiceProvider.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)Options\OptionsPageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Resources\CopyLinkCommandPackage.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)VSPackage.resx">
+      <MergeWithCTO>true</MergeWithCTO>
+      <ManifestResourceName>VSPackage</ManifestResourceName>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>
