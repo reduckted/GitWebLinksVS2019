@@ -1,16 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <ItemGroup>
-        <EmbeddedResource Include="$(MSBuildThisFileDirectory)\..\..\packages\LibGit2Sharp.NativeBinaries.1.0.185\libgit2\libgit2_hash.txt" />
-        <EmbeddedResource Include="$(MSBuildThisFileDirectory)\..\..\packages\LibGit2Sharp.NativeBinaries.1.0.185\libgit2\libgit2_filename.txt" />
-    </ItemGroup>
-    <ItemGroup>
-        <Content Include="$(MSBuildThisFileDirectory)\..\..\packages\LibGit2Sharp.NativeBinaries.1.0.185\runtimes\win7-x86\native\git2-15e1193.dll">
+        <Content Include="$(USERPROFILE)\.nuget\packages\libgit2sharp.nativebinaries\1.0.185\runtimes\win7-x86\native\git2-15e1193.dll">
             <Link>lib\win32\x86\git2-15e1193.dll</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <IncludeInVSIX>true</IncludeInVSIX>
         </Content>
-        <None Include="$(MSBuildThisFileDirectory)\..\..\packages\LibGit2Sharp.NativeBinaries.1.0.185\libgit2\LibGit2Sharp.dll.config">
+        <None Include="$(USERPROFILE)\.nuget\packages\libgit2sharp.nativebinaries\1.0.185\libgit2\LibGit2Sharp.dll.config">
             <Link>LibGit2Sharp.dll.config</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <IncludeInVSIX>true</IncludeInVSIX>
