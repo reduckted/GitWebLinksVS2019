@@ -3,18 +3,24 @@ $ErrorActionPreference = "Stop"
 
 $root = Split-Path -Path $PSCommandPath -Parent | Join-Path -ChildPath "..\.." | Resolve-Path
 
-$msbuild = ""
+$vsPath = ""
 
 foreach ($edition in @("Community", "Professional", "Enterprise")) {
-    $exe = Join-Path -Path ${env:ProgramFiles(x86)} -ChildPath "Microsoft Visual Studio\2019\$edition\MSBuild\Current\Bin\msbuild.exe"
+    $path = Join-Path -Path ${env:ProgramFiles} -ChildPath "Microsoft Visual Studio\2022\$edition"
 
-    if (Test-Path $exe) {
-        $msbuild = $exe
+    if (Test-Path $path) {
+        $vsPath = $path
         break;
     }
 }
 
-if (-not $msbuild) {
+if (-not $vsPath) {
+    throw "Could not find Visual Studio installation."
+}
+
+$msbuild = Join-Path -Path $vsPath -ChildPath "MSBuild\Current\Bin\msbuild.exe"
+
+if (-not (Test-Path $msbuild)) {
     throw "Could not find MSBuild."
 }
 
@@ -26,10 +32,15 @@ if ($LASTEXITCODE -ne 0) {
     throw "Build failed."
 }
 
-$xunit = Join-Path -Path $root -ChildPath "packages\xunit.runner.console.2.4.1\tools\net452\xunit.console.exe"
+$vstest = Join-Path -Path $vsPath -ChildPath "Common7\IDE\Extensions\TestPlatform\vstest.console.exe"
+
+if (-not (Test-Path $vstest)) {
+    throw "Could not find VSTest"
+}
+
 $assembly = Join-Path -Path $root -ChildPath "tests\GitWebLinks.Tests\bin\Release\GitWebLinks.Tests.dll"
 
-& $xunit $assembly
+& $vstest $assembly
 
 if ($LASTEXITCODE -ne 0) {
     throw "Tests failed."
@@ -38,3 +49,7 @@ if ($LASTEXITCODE -ne 0) {
 $extension = Join-Path -Path $root -ChildPath "source\GitWebLinks\bin\Release\GitWebLinks.vsix"
 
 explorer.exe "/select,`"$extension`""
+
+$extension2022 = Join-Path -Path $root -ChildPath "source\GitWebLinks2022\bin\Release\GitWebLinks2022.vsix"
+
+explorer.exe "/select,`"$extension2022`""
