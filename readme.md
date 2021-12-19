@@ -1,10 +1,12 @@
-﻿# Git Web Links
+### ℹ️ The extension for Visual Studio 2022 can be found at https://github.com/reduckted/GitWebLinks
+
+<hr>
+
+# Git Web Links for Visual Studio 2019
 
 Get it from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=reduckted.GitWebLinks).
 
-_Looking for the Visual Studio Code extension? [It's over here!](https://github.com/reduckted/vscode-gitweblinks)_
-
-Copy links to files in their online Git repositories from inside Visual Studio 2017+.
+Copy links to files in their online Git repositories from inside Visual Studio 2019.
 
 Works with:
 * GitHub
